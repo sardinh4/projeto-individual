@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+  --gradiente: linear-gradient(
+    90deg,
+    #041b22 12.72%,
+    #041b22 16.22%,
+    #041b22 21.72%,
+    #041b22 21.73%,
+    #07313e 37.72%,
+    #0a4457 48.22%,
+    #0e617c 58.22%,
+    #0e617c 70.2%,
+    #0e617c 70.21%,
+    #0e617c 79.22%,
+    #1e7b92 92.22%,
+    #36a3b3 99.98%,
+    #5ce1e6 99.99%,
+    #27d4d4 100%
+  );
+
+  --gradiente-cima-baixo: linear-gradient(
+    0deg,
+    #041b22 12.72%,
+    #041b22 16.22%,
+    #041b22 21.72%,
+    #041b22 21.73%,
+    #07313e 37.72%,
+    #0a4457 48.22%,
+    #0e617c 58.22%,
+    #0e617c 70.2%,
+    #0e617c 70.21%,
+    #0e617c 79.22%,
+    #1e7b92 92.22%,
+    #36a3b3 99.98%,
+    #5ce1e6 99.99%,
+    #27d4d4 100%
+  );
+
+  --padding: 70px 120px;
+  --cor-primaria: #eee;
+  --cor-secundaria: #083b4b;
+  --cor-tercearia: #012f32;
+  --cor-quartenaria: #b4b4b4;
+  --cor-quinaria: #0f627e;
+  --cor-senaria: #6e6e6e;
+  --cor-setenaria: #1b9cc7;
+  --row-gap: 50px;
+}
+
+/*"RESETANDO"/RECONFIGURANDO ALGUMAS ESTILIZAÇÕES PADRÕES DOS NAVEGADORES EM TODOS OS COMPONENTES*/
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Saira", sans-serif;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+
+a, button, input{
+  cursor: pointer;
+  
+}
+
+button:focus {
+  outline: none;
+  scale: 1.1;
+}
+
+a:focus {
+  outline: none;
+  scale: 1.1;
+  border-bottom: 2px solid var( --cor-quartenaria);
+}
+
+i:focus{
+  outline: none;
+  scale: 1.1;
+}
+
+
+html, body {
+  font-size: 12px;
+  height: 100%;
+  width: 100%;
+  background-color: var(--cor-primaria);
+}
+
