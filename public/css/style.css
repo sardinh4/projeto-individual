@@ -1,0 +1,143 @@
+@import url(../../config/css/config.css);
+
+/* 
+  --first_color: #00243C;
+  --second_color: #00507D;
+  --third_color: #0491BE;
+  --fourth_color: #08ACC7;
+  --fifth_color: #45C6CB;
+  --sixth_color: #7AEDE7;
+  --seventh_color: #029BAB;
+
+  --principal_color: #E5E5E5;
+
+  --linear_gradient: linear-gradient(
+    0deg,
+    #08ACC7 0%,
+    #0491BE 36%,
+    #00507D 66%,
+    #00243C 100%
+  );
+
+  --padding_x: 100px;
+  --padding_y: 50px;
+
+*/
+
+body{
+    height: auto;
+}
+
+/* HEADER */
+
+.header{
+    background: var(--linear_gradient);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--padding_x);
+    padding-block: 30px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+}
+
+.header .logotipo_container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+}
+
+.header .logotipo_container span{
+    font-size: 2rem;
+    text-transform: uppercase;
+    font-weight: bolder;
+    
+}
+
+.header .logotipo_container img{
+    width: 50px;
+    
+}
+
+.header .navbar{
+    width: fit-content;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    align-items: center;
+    column-gap: 25px;
+}
+
+.header .navbar ul{
+    width: fit-content;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    align-items: center;
+    column-gap: 25px;
+}
+
+.header .navbar ul, .header .navbar a, .header .navbar span{
+    text-transform: uppercase;
+    font-size: 2rem;
+}
+
+.header .btn_jogar{
+    padding: 10px 30px;
+    background: var(--principal_color);
+    color: var(--second_color);
+    border-radius: 4px;
+    font-weight: bolder;
+}
+
+.header .btn_cadastrar{
+    padding: 10px 30px;
+    background: var(--second_color);
+    color: var(--principal_color);
+    border-radius: 4px;
+    font-weight: bolder;
+}
+
+/* /HEADER */
+
+/* MAIN */
+
+.main{
+    padding-inline: var(--padding_x);
+}
+
+.main .sections{
+    height: 75vh;
+    width: 100%;
+    border-radius: 50px;
+   
+    overflow: hidden;
+    margin-bottom: var(--padding_x);;
+}
+
+#home{
+    border-radius: 0 0 50px 50px;
+    background: var(--first_color);
+  
+}
+
+#services .sections{
+    background: var(--first_color);
+}
+
+#about .sections {
+    background: var(--second_color);
+}
+
+#help {
+    background: var(--third_color);
+}
+
+/* /MAIN */
+
+
+
+.footer{
+    background: var(--linear_gradient);
+ 
+}
