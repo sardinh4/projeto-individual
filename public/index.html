@@ -8,8 +8,10 @@
   <title>Sketch Up</title>
 
   <script src="https://kit.fontawesome.com/041dbc8823.js" crossorigin="anonymous"></script>
+
   <link rel="shortcut icon" type="imagex/png" href="../config/assets/logo/logo.svg">
 
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
@@ -17,10 +19,11 @@
   <!-- HEADER -->
   <header class="header">
 
-    <img src="../config/assets/logo/logotipo.svg" alt="">
-
+    <div class="logotipo_container">
+      <img src="../config/assets/logo/logo.svg" alt="">
+      <span>Sketch Up</span>
+    </div>
     <nav class="navbar">
-
       <ul>
         <li><a href="#home">home</a></li>
         <li><a href="#services">serviços</a></li>
@@ -40,13 +43,19 @@
 
     <!-- HOME -->
 
-    <section class="main_section" id="home">
-      <h1>Sketch Up</h1>
-      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorum doloribus cupiditate esse nobis. Aliquid,
-        eius nemo nulla delectus ea id perferendis accusamus autem repudiandae. Sunt cumque ratione nam aut. Doloremque.
-      </p>
-      <a href="#services">Saiba mais</a>
-      <img src="../config/assets/avatar/leonardo_01_avatar.svg" alt="">
+    <section class="sections" id="home">
+      <div id="home_bg"></div>
+      <div class="left_conatainer">
+        <h1>Sketch Up</h1>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorum doloribus cupiditate esse nobis. Aliquid,
+          eius nemo nulla delectus ea id perferendis accusamus autem repudiandae. Sunt cumque ratione nam aut.
+          Doloremque.
+        </p>
+        <a href="#services">Saiba mais</a>
+      </div>
+      <img id="home_avatar" src="../config/assets/avatar/leonardo_01_avatar.svg" alt="">
+      <img id="home_bg_1" src="./assets/bg/home_bg_1.svg" alt="">
+      <img id="home_bg_2" src="./assets/bg/home_bg_2.svg" alt="">
     </section>
 
     <!-- /HOME -->
@@ -55,43 +64,37 @@
 
     <section class="main_section" id="services">
 
-      <section class="section_section">
+      <section class="sections" id="services_fisrt_section">
         <h2>Sketch Up</h2>
         <img src="../config/assets/avatar/ana_avatar.svg" alt="">
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis inventore
           aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
           consequatur soluta facere error.</p>
-        <a class="btn_jogar" href="../auth/login.html">jogar</a>
-        <a class="btn_cadastrar" href="../auth/cadastro.html">cadastrar</a>
+        <div class="btn_conatainer">
+          <a class="btn_jogar" href="../auth/login.html">jogar</a>
+          <a class="btn_cadastrar" href="../auth/cadastro.html">cadastrar</a>
+        </div>
 
       </section>
 
-      <section class="section_section">
+      <section class="sections " id="services_second_section">
         <h2>TUDO ISSO EM UM SÓ LUGAR</h2>
         <div class="services_container">
           <div class="services_card">
             <h3>Título</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit sed, expedita, eius possimus sit vero
-              exercitationem vitae asperiores velit odit nihil aliquam veniam, omnis ab necessitatibus totam debitis vel
-              voluptatum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
           </div>
           <div class="services_card">
             <h3>Título</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit sed, expedita, eius possimus sit vero
-              exercitationem vitae asperiores velit odit nihil aliquam veniam, omnis ab necessitatibus totam debitis vel
-              voluptatum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
           </div>
           <div class="services_card">
             <h3>Título</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit sed, expedita, eius possimus sit vero
-              exercitationem vitae asperiores velit odit nihil aliquam veniam, omnis ab necessitatibus totam debitis vel
-              voluptatum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
           </div>
           <div class="services_card">
             <h3>Título</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit sed, expedita, eius possimus sit vero
-              exercitationem vitae asperiores velit odit nihil aliquam veniam, omnis ab necessitatibus totam debitis vel
-              voluptatum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
           </div>
         </div>
         <img src="../config/assets/avatar/nicolly_avatar.svg" alt="">
@@ -102,42 +105,63 @@
 
     <!-- ABOUT -->
 
-    <section class="main_section" id="service">
+    <section class="main_section" id="about">
 
-      <section class="section_section">
-        <h2>Sobre a Sketch Up</h2>
+      <section class="sections" id="about_first_section">
+
         <img src="../config/assets/logo/logo.svg" alt="">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis inventore
-          aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
-          consequatur soluta facere error.</p>
+        <div class="about_text_conatainer">
+          <h2>Sobre a Sketch Up</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis
+            inventore
+            aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
+            consequatur soluta facere error.</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis
+              inventore
+              aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
+              consequatur soluta facere error.
+            </p>
+        </div>
       </section>
 
 
-      <section class="section_section">
-        <h2>Leonardo Sardinha</h2>
+      <section class="sections" id="about_second_section">
+
+        <div class="about_text_conatainer">
+          <h2>Leonardo Sardinha</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis
+            inventore
+            aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
+            consequatur soluta facere error.
+          </p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis
+            inventore
+            aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
+            consequatur soluta facere error.
+          </p>
+        </div>
         <img src="../config/assets/avatar/leonardo_02_avatar.svg" alt="">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis quo a accusantium iste reiciendis inventore
-          aliquam voluptates. Quisquam suscipit perspiciatis quaerat provident ex, exercitationem quo adipisci
-          consequatur soluta facere error.</p>
+
 
       </section>
-      <!-- /ABOUT -->
+    </section>
+    <!-- /ABOUT -->
 
-      <!-- HELP -->
+    <!-- HELP -->
 
-      <section class="section_section">
-        <h2>Central de Ajuda</h2>
-        <img src="../config/assets/avatar/neto_avatar.svg" alt="">
+    <section class="sections" id="help">
+      <h2>Central de Ajuda</h2>
+      <img src="../config/assets/avatar/neto_avatar.svg" alt="">
 
-      </section>
+    </section>
 
-      <!-- /HELP -->
+    <!-- /HELP -->
 
   </main>
   <!-- /MAIN -->
 
   <footer class="footer">
-    <img src="../config/assets/logotipo.svg" alt="">
+    <img src="../config/assets/logo/logotipo.svg" alt="">
     <p id="p_1">Nossa visão é proporcionar comodidade e ajudar a aumentar o seu <br> agronegócio.</p>
 
     <ul>
