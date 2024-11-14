@@ -40,7 +40,7 @@ a {
   font-size: 2.5rem;
   font-weight: bold;
   text-transform: uppercase;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 body {
@@ -106,7 +106,7 @@ body {
   padding: 10px 30px;
   background: var(--principal_color);
   color: var(--second_color);
-  border-radius: 4px;
+  border-radius: 10px;
   font-weight: bolder;
   width: fit-content;
   height: fit-content;
@@ -116,7 +116,7 @@ body {
   padding: 10px 30px;
   background: var(--second_color);
   color: var(--principal_color);
-  border-radius: 4px;
+  border-radius: 10px;
   font-weight: bolder;
   width: fit-content;
   height: fit-content;
@@ -299,7 +299,8 @@ body {
 
 /* /SERVICES */
 
-#about .sections {
+#about .sections,
+#help {
   background: var(--second_color);
   display: flex;
   align-items: center;
@@ -307,7 +308,6 @@ body {
 
   & img {
     height: 100%;
-  
   }
 
   & div {
@@ -315,22 +315,104 @@ body {
     display: flex;
     flex-direction: column;
     gap: 30px;
-
-
+    justify-content: space-between;
   }
 }
 
-#about_first_section{
-    text-align: end;
+#about_first_section {
+  text-align: end;
 }
-
 
 #help {
   background: var(--third_color);
 }
 
+.btn_contact {
+  padding: 20px 50px;
+  background-color: var(--principal_color);
+  color: var(--second_color);
+}
+
+#help_container {
+  text-align: end;
+  align-items: end;
+}
+
 /* /MAIN */
 
 .footer {
-  background: var(--linear_gradient);
+  background: var(--first_color);
+  padding: var(--padding_x);
+  display: grid;
+  grid-template-columns: repeat(auto, 3);
+  grid-template-rows: repeat(min-content, 5);
+  grid-template-areas: 
+  "footer_logo footer_second_list"
+  "footer_p_1 footer_second_list"
+  "footer_first_list footer_second_list"
+  "footer_p_2 footer_second_list"
+  "p_direitos_reservados p_direitos_reservados";
+  row-gap: 10px;  
 }
+
+.footer * {
+  font-size: 14px;
+}
+
+#footer_logo {
+  grid-area: footer_logo;
+}
+
+#footer_p_1 {
+  grid-area: footer_p_1;
+}
+
+#footer_first_list {
+  grid-area: footer_first_list;
+  display: flex;
+  gap: 10px;
+  
+  & i{
+    font-size: 3rem;
+  }
+}
+
+#footer_p_2 {
+  grid-area: footer_p_2;
+
+  & a{
+    text-transform: none;
+  }
+}
+
+#footer_second_list {
+  grid-area: footer_second_list;
+  justify-self: end;
+  text-align: end;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+
+  & h4{
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+  }
+
+  & a{
+    font-weight:300;
+    text-decoration: underline;
+    font-size: 1.5rem;
+  }
+
+}
+
+#p_direitos_reservados {
+  grid-area: p_direitos_reservados;
+  justify-self: center;
+
+}
+
+

@@ -1,0 +1,526 @@
+@import url("https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import url(../../../config/css/config.css);
+
+:root {
+  --padding: 70px;
+}
+body{
+  overflow: hidden;
+}
+
+main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+.main_contant {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+  display: grid;
+  background-color: var(--primary_color);
+}
+
+.main_container_login {
+  grid-template-columns: 65% 35%;
+}
+
+.main_container_cadastro {
+  grid-template-columns: 35% 65%;
+  position: absolute;
+}
+
+.main_contant::before {
+  content: "";
+  position: absolute;
+  background-color: var(--first_color);
+  width: 35%;
+  height: 100%;
+  left: 0;
+  border-radius: 0 30px 30px 0;
+  z-index: 10;
+}
+
+#section_formulario_cadastro,
+#container_cadastro_section_login {
+  z-index: 11;
+}
+
+#section_formulario_login,
+#container_login_section_cadastro {
+  z-index: -1;
+}
+
+/* MOSTRAR CADASTRO */
+
+.cadastro_js #section_formulario_cadastro {
+  z-index: 11;
+}
+
+.cadastro_js #container_cadastro_section_login {
+  z-index: 13;
+}
+
+.cadastro_js #section_formulario_login {
+  z-index: -1;
+}
+
+.cadastro_js .main_contant::before {
+  left: 0;
+  animation: slideout 1.5s ease;
+  z-index: 12;
+}
+
+/* MOSTRAR CADASTRO */
+
+/* MOSTRAR LOGIN */
+
+.cadastro_js #container_cadastro_section_login {
+  z-index: 13;
+}
+
+.login_js #section_formulario_cadastro {
+  z-index: -1;
+}
+
+.login_js #container_cadastro_section_login {
+  z-index: -1;
+}
+
+.login_js #container_login_section_cadastro {
+  z-index: 13;
+}
+
+.login_js #section_formulario_login {
+  z-index: 11;
+}
+
+.login_js .main_contant::before {
+  left: 65%;
+  border-radius: 30px 0 0 30px;
+  animation: slidein 1.5s ease;
+  z-index: 12;
+}
+
+/* /MOSTRAR LOGIN */
+
+/* ANIMAÇÃO CSS PARA O MAIN_CONTANT::BEFORE */
+
+@keyframes slidein {
+  from {
+    left: 0;
+    width: 35%;
+  }
+
+  to {
+    left: 65%;
+    width: 35%;
+  }
+}
+
+@keyframes slideout {
+  from {
+    left: 65%;
+  }
+
+  to {
+    left: 0;
+    width: 35%;
+  }
+}
+
+/* /ANIMAÇÃO CSS PARA O MAIN_CONTANT::BEFORE */
+
+/* DESLOCAMENTO CONTEÚDO ATRÁS DO CONTENT:BEFORE */
+
+.login_js #section_formulario_cadastro {
+  z-index: -1;
+  position: relative;
+  animation: deslocamentoEsquerda 2s;
+}
+
+.cadastro_js #section_formulario_login {
+  position: relative;
+  z-index: -1;
+  animation: deslocamentoDireita 2s;
+}
+
+.login_js #section_formulario_login,
+.cadastro_js #section_formulario_cadastro {
+  animation: sumirMensagem 0.5s;
+}
+
+.login_js #container_login_section_cadastro,
+.cadastro_js #container_cadastro_section_login {
+  animation: sumirMensagem 1s;
+}
+
+.login_js #container_login_section_cadastro .circulos, .cadastro_js #container_cadastro_section_login .circulos{
+  animation: sumirMensagem 2.5s;
+}
+
+
+
+
+/*ANIMAÇÃOO CSS PARA O CONTEÚDO*/
+
+@keyframes deslocamentoEsquerda {
+  from {
+    left: 0;
+    opacity: 1;
+    z-index: 12;
+  }
+
+  25% {
+    left: -80px;
+    opacity: 0;
+  }
+
+  50% {
+    left: -100px;
+    opacity: 0;
+  }
+
+  to {
+    left: -110px;
+    
+    opacity: 0;
+    z-index: -1;
+  }
+}
+
+@keyframes deslocamentoDireita {
+  from {
+    left: 0;
+    opacity: 1;
+    z-index: 12;
+  }
+
+  25% {
+    left: 80px;
+    opacity: 0;
+  }
+
+  50% {
+    left: 100px;
+    opacity: 0;
+  }
+
+  to {
+    left: 110px;
+    opacity: 0;
+    z-index: -1;
+    
+  }
+}
+
+@keyframes sumirMensagem {
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* /ANIMAÇÃOO CSS PARA O CONTEÚDO */
+
+/* / DESLOCAMENTO CONTEÚDO ATRÁS DO CONTENT:BEFORE */
+
+h2 {
+  font-size: 3rem;
+}
+
+#btn_voltar{
+  position: absolute; 
+  color: var(--primary_color);
+  z-index: 15;
+  left: 70px;
+  top: 70px;
+  font-size: 2.5rem;
+  transition: 2.5s ease;
+}
+
+.login_js #btn_voltar{
+  color: var(--first_color);
+}
+.cadastro_js #btn_voltar{
+  color: var(--primary_color);
+}
+
+.logo {
+  position: absolute;
+  height: 70px;
+  z-index: 15;
+  right: 70px;
+  top: 70px;
+}
+
+#container_cadastro_section_login,
+#container_login_section_cadastro {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  align-items: baseline;
+  padding: var(--padding);
+  position: relative;
+  overflow: hidden;
+
+  & * {
+    color: var(--primary_color);
+  }
+
+  & .textos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+
+    & h3 {
+      font-size: 2.5rem;
+    }
+
+    & p {
+      font-size: 2rem;
+    }
+  }
+
+  & .toggle_btn {
+    border: 4px var(--primary_color) solid;
+    background-color: var(--second_color);
+    font-size: 2rem;
+    border-radius: 25px;
+    width: fit-content;
+    padding: 10px 80px;
+    transition: 0.5s ease;
+    font-weight: bold;
+  }
+
+  & .toggle_btn:hover {
+    scale: 1.1;
+    background-color: var(--primary_color);
+    color: var(--first_color);
+  }
+
+  & .circulo1,
+  .circulo2,
+  .circulo3,
+  .circulo4,
+  .circulo5 {
+    background: linear-gradient(to right, #f9f9f90f, #f9f9f91a);
+    border-radius: 100%;
+    position: absolute;
+  }
+
+  & .circulo1 {
+    width: 130px;
+    height: 130px;
+    top: -35px;
+    right: -30px;
+  }
+
+  & .circulo2 {
+    width: 150px;
+    height: 150px;
+    left: 102px;
+    top: 129px;
+  }
+
+  & .circulo3 {
+    bottom: 147px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+  }
+
+  & .circulo4 {
+    left: -50px;
+    bottom: -50px;
+    width: 300px;
+    height: 300px;
+  }
+
+  & .circulo5 {
+    left: -50px;
+    top: 20px;
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.section_formulario {
+  padding: var(--padding);
+  display: grid;
+  grid-template-columns: 1fr;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+
+  & .container_formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+
+    & h2 {
+      color: var(--first_color);
+    }
+  }
+
+  & #formulario_cadastro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(5, auto);
+    grid-template-areas:
+      "div_input_usuario div_input_email"
+      "div_input_razao_social div_input_nome_fantasia"
+      "div_input_cnpj div_input_representante_legal"
+      "div_input_senha div_input_confirmacao_senha"
+      "btn btn";
+    justify-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+
+    & #div_input_usuario {
+      grid-area: div_input_usuario;
+    }
+
+    & #campo_mensagem_erro {
+      grid-area: campo_mensagem_erro;
+      display: none;
+      font-size: 1.5rem;
+      width: 100%;
+      padding-left: 30px;
+    }
+
+    & #div_input_razao_social {
+      grid-area: div_input_razao_social;
+    }
+    & #div_input_nome_fantasia {
+      grid-area: div_input_nome_fantasia;
+    }
+    & #div_input_cnpj {
+      grid-area: div_input_cnpj;
+    }
+    & #div_input_representante_legal {
+      grid-area: div_input_representante_legal;
+    }
+
+    & .div_input_email {
+      grid-area: div_input_email;
+    }
+
+    & .div_input_senha {
+      grid-area: div_input_senha;
+      grid-template-columns: auto 1fr auto;
+    }
+
+    & #div_input_confirmacao_senha {
+      grid-area: div_input_confirmacao_senha;
+      grid-template-columns: auto 1fr auto;
+    }
+  }
+
+  & .input-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-row: auto;
+    grid-template-columns: 5% 1fr;
+    gap: 20px;
+    background-color: var(--second_color);
+    align-items: center;
+    padding: 10px 30px;
+
+    & i {
+      font-size: 1.5rem;
+   
+      height: fit-content;
+    }
+
+    & input {
+      width: 100%;
+      font-size: 1.5rem;
+      
+    }
+
+    & input:focus {
+      outline: none;
+    }
+
+    & input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px var(--second_color) inset !important;
+      -webkit-text-fill-color: var(--cor-senaria) !important;
+    }
+  }
+
+  & #formulario_login {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      "div_input_email"
+      "div_input_senha"
+      "btn";
+    justify-items: center;
+    gap: 10px;
+    width: 80%;
+    height: fit-content;
+
+    & .div_input_email {
+      grid-area: div_input_email;
+    }
+
+    & .div_input_senha {
+      grid-area: div_input_senha;
+      grid-template-columns: 5% 1fr auto;
+
+      & #toggleConfirmacaoSenha,
+      #toggleSenha {
+        cursor: pointer;
+      }
+    }
+  }
+
+  & #toggle_confirmacao_senha,
+  #toggle_senha_cadastro,
+  #toggle_senha_login {
+    cursor: pointer;
+  }
+
+  & #btn_cadastrar,
+  #btn_entrar {
+    grid-area: btn;
+    border: 4px var(--first_color) solid;
+    background-color: var(--first_color);
+    color: var(--primary_color);
+    border-radius: 25px;
+    width: fit-content;
+    height: fit-content;
+    font-size: 2rem;
+    font-weight: bold;
+    transition: 0.5s ease;
+    padding: 10px 80px;
+    margin-top: 50px;
+  }
+
+  & #btn_cadastrar:hover,
+  #btn_entrar:hover {
+    scale: 1.1;
+    background-color: var(--primary_color);
+    color: var(--first_color);
+  }
+}
