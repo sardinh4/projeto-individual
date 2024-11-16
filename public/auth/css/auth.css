@@ -1,19 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap");
 
-@import url(../../../config/css/config.css);
-
-:root {
-  --padding: 70px;
-}
-body{
-  overflow: hidden;
-}
+@import url(../../config/css/config.css);
 
 main {
   width: 100%;
   height: 100%;
   display: flex;
-  overflow: hidden;
 }
 
 .main_contant {
@@ -34,15 +26,62 @@ main {
   position: absolute;
 }
 
-.main_contant::before {
-  content: "";
+.bg {
   position: absolute;
-  background-color: var(--first_color);
+  background: var(--linear_gradient_2);
   width: 35%;
   height: 100%;
-  left: 0;
   border-radius: 0 30px 30px 0;
   z-index: 10;
+  overflow: hidden;
+}
+
+.bg_conatainer {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  filter: blur(7px);
+}
+
+.bg1,
+.bg2 {
+  position: absolute;
+
+  z-index: 1;
+  height: 100%;
+}
+
+.logo path {
+  fill: #00243c;
+}
+
+.bg1 {
+  height: auto;
+  left: -10%;
+}
+
+.circulo1 {
+  width: 1000px;
+  height: 1000px;
+  top: -100%;
+  left: -100%;
+  border-radius: 100%;
+  background: radial-gradient(circle at center, #00507d, #004f7d00);
+  position: absolute;
+  z-index: -3;
+  filter: blur(100px);
+}
+
+.circulo2 {
+  width: 700px;
+  height: 700px;
+  bottom: -100%;
+  right: -100%;
+  border-radius: 100%;
+  background: radial-gradient(circle at center, #00507d, #004f7d00);
+  position: absolute;
+  z-index: -2;
+  filter: blur(100px);
 }
 
 #section_formulario_cadastro,
@@ -69,10 +108,18 @@ main {
   z-index: -1;
 }
 
-.cadastro_js .main_contant::before {
+.cadastro_js .bg {
   left: 0;
   animation: slideout 1.5s ease;
   z-index: 12;
+}
+
+.cadastro_js .logo path {
+  fill: #00243c;
+}
+
+.cadastro_js #btn_voltar i {
+  color: #e5e5e5;
 }
 
 /* MOSTRAR CADASTRO */
@@ -99,12 +146,24 @@ main {
   z-index: 11;
 }
 
-.login_js .main_contant::before {
+.login_js .bg {
   left: 65%;
   border-radius: 30px 0 0 30px;
   animation: slidein 1.5s ease;
   z-index: 12;
 }
+
+.login_js .logo path {
+  fill: #e5e5e5;
+}
+
+.login_js #btn_voltar i {
+  color: #00243c;
+}
+
+
+
+
 
 /* /MOSTRAR LOGIN */
 
@@ -159,12 +218,10 @@ main {
   animation: sumirMensagem 1s;
 }
 
-.login_js #container_login_section_cadastro .circulos, .cadastro_js #container_cadastro_section_login .circulos{
+.login_js #container_login_section_cadastro .circulos,
+.cadastro_js #container_cadastro_section_login .circulos {
   animation: sumirMensagem 2.5s;
 }
-
-
-
 
 /*ANIMAÇÃOO CSS PARA O CONTEÚDO*/
 
@@ -187,7 +244,7 @@ main {
 
   to {
     left: -110px;
-    
+
     opacity: 0;
     z-index: -1;
   }
@@ -214,7 +271,6 @@ main {
     left: 110px;
     opacity: 0;
     z-index: -1;
-    
   }
 }
 
@@ -240,8 +296,8 @@ h2 {
   font-size: 3rem;
 }
 
-#btn_voltar{
-  position: absolute; 
+#btn_voltar {
+  position: absolute;
   color: var(--primary_color);
   z-index: 15;
   left: 70px;
@@ -250,12 +306,7 @@ h2 {
   transition: 2.5s ease;
 }
 
-.login_js #btn_voltar{
-  color: var(--first_color);
-}
-.cadastro_js #btn_voltar{
-  color: var(--primary_color);
-}
+
 
 .logo {
   position: absolute;
@@ -274,6 +325,7 @@ h2 {
   padding: var(--padding);
   position: relative;
   overflow: hidden;
+  border-radius: 0 30px 30px 0;
 
   & * {
     color: var(--primary_color);
@@ -286,6 +338,7 @@ h2 {
     justify-content: center;
     text-align: center;
     gap: 40px;
+    z-index: 2;
 
     & h3 {
       font-size: 2.5rem;
@@ -297,68 +350,26 @@ h2 {
   }
 
   & .toggle_btn {
-    border: 4px var(--primary_color) solid;
+   
     background-color: var(--second_color);
     font-size: 2rem;
-    border-radius: 25px;
+    border-radius: 10px;
     width: fit-content;
     padding: 10px 80px;
     transition: 0.5s ease;
     font-weight: bold;
   }
 
-  & .toggle_btn:hover {
+  & .toggle_btn:hover, .toggle_btn:focus{
     scale: 1.1;
-    background-color: var(--primary_color);
+    background-color: var(--principal_color);
     color: var(--first_color);
-  }
-
-  & .circulo1,
-  .circulo2,
-  .circulo3,
-  .circulo4,
-  .circulo5 {
-    background: linear-gradient(to right, #f9f9f90f, #f9f9f91a);
-    border-radius: 100%;
-    position: absolute;
-  }
-
-  & .circulo1 {
-    width: 130px;
-    height: 130px;
-    top: -35px;
-    right: -30px;
-  }
-
-  & .circulo2 {
-    width: 150px;
-    height: 150px;
-    left: 102px;
-    top: 129px;
-  }
-
-  & .circulo3 {
-    bottom: 147px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-  }
-
-  & .circulo4 {
-    left: -50px;
-    bottom: -50px;
-    width: 300px;
-    height: 300px;
-  }
-
-  & .circulo5 {
-    left: -50px;
-    top: 20px;
-    width: 100px;
-    height: 100px;
   }
 }
 
+#container_login_section_cadastro {
+  border-radius: 30px 0 0 30px;
+}
 .section_formulario {
   padding: var(--padding);
   display: grid;
@@ -383,9 +394,8 @@ h2 {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(5, auto);
     grid-template-areas:
-      "div_input_usuario div_input_email"
-      "div_input_razao_social div_input_nome_fantasia"
-      "div_input_cnpj div_input_representante_legal"
+      "div_input_nome div_input_nome_usuario"
+      "div_input_email div_input_confirmacao_email"
       "div_input_senha div_input_confirmacao_senha"
       "btn btn";
     justify-items: center;
@@ -393,33 +403,20 @@ h2 {
     width: 100%;
     height: 100%;
 
-    & #div_input_usuario {
-      grid-area: div_input_usuario;
-    }
 
-    & #campo_mensagem_erro {
-      grid-area: campo_mensagem_erro;
-      display: none;
-      font-size: 1.5rem;
-      width: 100%;
-      padding-left: 30px;
+    & #div_input_nome_usuario {
+      grid-area: div_input_nome_usuario;
     }
-
-    & #div_input_razao_social {
-      grid-area: div_input_razao_social;
-    }
-    & #div_input_nome_fantasia {
-      grid-area: div_input_nome_fantasia;
-    }
-    & #div_input_cnpj {
-      grid-area: div_input_cnpj;
-    }
-    & #div_input_representante_legal {
-      grid-area: div_input_representante_legal;
+    & #div_input_nome {
+      grid-area: div_input_nome;
     }
 
     & .div_input_email {
       grid-area: div_input_email;
+    }
+
+    & #div_input_confirmacao_email {
+      grid-area: div_input_confirmacao_email;
     }
 
     & .div_input_senha {
@@ -441,29 +438,35 @@ h2 {
     grid-row: auto;
     grid-template-columns: 5% 1fr;
     gap: 20px;
-    background-color: var(--second_color);
+    background-color: #A3BAC7;
     align-items: center;
     padding: 10px 30px;
 
     & i {
       font-size: 1.5rem;
-   
+      color: var(--first_color);
       height: fit-content;
     }
 
     & input {
       width: 100%;
       font-size: 1.5rem;
-      
+      color: var(--first_color);
+      font-weight: 300;
+    }
+
+    & input::placeholder {
+      color: var(--first_color);
     }
 
     & input:focus {
       outline: none;
+      color: var(--first_color);
     }
 
     & input:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0px 1000px var(--second_color) inset !important;
-      -webkit-text-fill-color: var(--cor-senaria) !important;
+      -webkit-box-shadow: 0 0 0px 1000px #A3BAC7 inset !important;
+      -webkit-text-fill-color: var(--first_color) !important;
     }
   }
 
@@ -504,10 +507,9 @@ h2 {
   & #btn_cadastrar,
   #btn_entrar {
     grid-area: btn;
-    border: 4px var(--first_color) solid;
     background-color: var(--first_color);
-    color: var(--primary_color);
-    border-radius: 25px;
+    color: var(--principal_color);
+    border-radius: 10px;
     width: fit-content;
     height: fit-content;
     font-size: 2rem;
@@ -517,10 +519,11 @@ h2 {
     margin-top: 50px;
   }
 
-  & #btn_cadastrar:hover,
-  #btn_entrar:hover {
+  & #btn_cadastrar:hover, #btn_cadastrar:focus
+  #btn_entrar:hover, #btn_entrar:focus {
+   
     scale: 1.1;
-    background-color: var(--primary_color);
-    color: var(--first_color);
+    background-color: var(--second_color);
+   
   }
 }
