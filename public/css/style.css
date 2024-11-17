@@ -1,28 +1,5 @@
 @import url(../../config/css/config.css);
 
-/* 
-  --first_color: #00243C;
-  --second_color: #00507D;
-  --third_color: #0491BE;
-  --fourth_color: #08ACC7;
-  --fifth_color: #45C6CB;
-  --sixth_color: #7AEDE7;
-  --seventh_color: #029BAB;
-
-  --principal_color: #E5E5E5;
-
-  --linear_gradient: linear-gradient(
-    0deg,
-    #08ACC7 0%,
-    #0491BE 36%,
-    #00507D 66%,
-    #00243C 100%
-  );
-
-  --padding_x: 100px;
-  --padding_y: 50px;
-
-*/
 
 h2 {
   font-size: 5rem;
@@ -34,7 +11,7 @@ p {
   line-height: 3rem;
 }
 
-a {
+a, .btn_jogar, .btn_cadastrar {
   width: fit-content;
   height: fit-content;
   font-size: 2.5rem;
@@ -341,7 +318,11 @@ body {
 /* /MAIN */
 
 .footer {
-  background: var(--first_color);
+  background: linear-gradient(
+    90deg,
+    #00243C 0%,
+    #00507D 33%,
+    #046788 66%);
   padding: var(--padding_x);
   display: grid;
   grid-template-columns: repeat(auto, 3);

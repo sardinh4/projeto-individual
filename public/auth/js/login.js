@@ -17,14 +17,6 @@ document.getElementById("input_senha_login").addEventListener("keydown", functio
 function login() {
     document.getElementById("formulario_login").addEventListener("submit", function (event) {
         event.preventDefault();
-    
-        // if (emailValue == "hfsystem@sptech.school" && senhaValue == "admin123") {
-        //   alert("Login realizado com sucesso");
-        //   entrar()
-        //   window.location.href = "./../private/dashboard.html";
-        // } else {
-        //   alert("Email ou senha incorretos");
-        // }
 
         entrar()
       });
@@ -34,25 +26,25 @@ function login() {
 
    function entrar() {
      
-        var emailVar = document.getElementById("input_email_login").value;
-        var senhaVar =  document.getElementById("input_senha_login").value;
+        var email = document.getElementById("input_email_login").value;
+        var password =  document.getElementById("input_senha_login").value;
 
-        if (emailVar == "" || senhaVar == "") {
+        if (email == "" || password == "") {
           alert("Preencha todos os campo");
             return false;
         }
 
-        console.log("FORM LOGIN: ", emailVar);
-        console.log("FORM SENHA: ", senhaVar);
+        console.log("FORM LOGIN: ", email);
+        console.log("FORM SENHA: ", password);
 
-        fetch("/usuarios/autenticar", {
+        fetch("/user/authenticate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                emailServer: emailVar,
-                senhaServer: senhaVar,
+                emailServer: email,
+                passwordServer: password,
                 
             })
         }).then(function (resposta) {

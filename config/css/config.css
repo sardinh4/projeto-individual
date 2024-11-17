@@ -25,6 +25,12 @@
     #08ACC7 100%
   );
 
+  --linear_gradient_2: linear-gradient(
+   
+    #000000 0%,
+    #141C29 100%
+  );
+
 }
 
 * {

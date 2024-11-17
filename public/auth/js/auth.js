@@ -9,6 +9,7 @@ if (bodyClass) {
   document.body.classList.add(bodyClass);
 
   if (bodyClass == "cadastro_js") {
+    document.title = "Sketch Up - Cadastro";
     habilitarDesabilitarNavegacaoTab("input", ".main_container_login", "-1");
     habilitarDesabilitarNavegacaoTab("button", ".main_container_login", "-1");
     habilitarDesabilitarNavegacaoTab("input", ".main_container_cadastro", "0");
@@ -16,14 +17,11 @@ if (bodyClass) {
   }
 
   if (bodyClass == "login_js") {
+    document.title = "Sketch Up - Login";
     habilitarDesabilitarNavegacaoTab("input", ".main_container_login", "0");
     habilitarDesabilitarNavegacaoTab("button", ".main_container_login", "0");
     habilitarDesabilitarNavegacaoTab("input", ".main_container_cadastro", "-1");
-    habilitarDesabilitarNavegacaoTab(
-      "button",
-      ".main_container_cadastro",
-      "-1"
-    );
+    habilitarDesabilitarNavegacaoTab("button", ".main_container_cadastro", "-1");
   }
 }
 
@@ -35,6 +33,7 @@ const btnLogin = document.getElementById("btn_login_toggle");
 
 btnCadastro.addEventListener("click", () => {
   body.className = "cadastro_js";
+  document.title = "Sketch Up - Cadastro";
   habilitarDesabilitarNavegacaoTab("input", ".main_container_login", "-1");
   habilitarDesabilitarNavegacaoTab("button", ".main_container_login", "-1");
   habilitarDesabilitarNavegacaoTab("input", ".main_container_cadastro", "0");
@@ -43,6 +42,7 @@ btnCadastro.addEventListener("click", () => {
 
 btnLogin.addEventListener("click", () => {
   body.className = "login_js";
+  document.title = "Sketch Up - Login";
   habilitarDesabilitarNavegacaoTab("input", ".main_container_login", "0");
   habilitarDesabilitarNavegacaoTab("button", ".main_container_login", "0");
   habilitarDesabilitarNavegacaoTab("input", ".main_container_cadastro", "-1");

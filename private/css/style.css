@@ -1,0 +1,81 @@
+@import url(../../config/css/config.css);
+
+main {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#transition_saction {
+  height: 100%;
+  width: 100%;
+  background: var(--linear_gradient_2);
+  position: relative;
+  
+}
+
+#circle1 {
+    width: 70vw;
+    height: 70vw;
+    top: 40%;
+    right: -50%;
+    transform: translate(-50%);
+    border-radius: 100%;
+    background: radial-gradient(circle at center, #00507d, #004f7d00);
+    position: absolute;
+  
+    filter: blur(100px);
+}
+
+#circle2 {
+  width: 90vw;
+  height: 90vw;
+  bottom: 40%;
+  left: 40%;
+  transform: translate(-50%);
+  border-radius: 100%;
+  background: radial-gradient(circle at center, #00507d, #004f7d00);
+  position: absolute;
+
+  filter: blur(100px);
+}
+
+#soot_bg_1{
+    height: 130vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    filter: blur(5px);
+}
+
+#soot_bg_2{
+    position: absolute;
+    width: 120vw;
+    height: 100vh;
+    top: 0;
+    transform: translate(-20%);
+    filter: blur(5px);
+}
+
+#transition_saction_contant{
+    background-color: rgba(0, 0, 0, 0.153);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+#transition_saction_contant .logo{
+    height: 50%;
+}
+
+#transition_saction_contant h1{
+    font-size: 10rem;
+    text-transform: uppercase;
+}
