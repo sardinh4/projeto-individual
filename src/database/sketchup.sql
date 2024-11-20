@@ -37,3 +37,5 @@ create table comunityGalery (
 	idcomunityGalery int primary key auto_increment unique,
     postData datetime
 );
+
+select * from user;
