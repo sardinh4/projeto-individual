@@ -2,10 +2,10 @@
   "name": "sketch",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-     "start": "node app.js",
-    "dev": "nodemon --exec node app.js"
+     "start": "node server.js",
+    "dev": "nodemon --exec node server.js"
   },
   "keywords": [],
   "author": "Leonardo Sardinha Santana",

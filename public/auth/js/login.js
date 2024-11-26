@@ -18,14 +18,6 @@ function login() {
     document.getElementById("formulario_login").addEventListener("submit", function (event) {
         event.preventDefault();
 
-        entrar()
-      });
-  }
-  
-  //
-
-   function entrar() {
-     
         var email = document.getElementById("input_email_login").value;
         var password =  document.getElementById("input_senha_login").value;
 
@@ -58,7 +50,7 @@ function login() {
                     console.log(JSON.stringify(json));
                     
                     setTimeout(function () {
-                        window.location = "../../private/menu.html";
+                        window.location = "../../private/index.html";
                     }, 1000); // apenas para exibir o loading
 
                 });
@@ -78,4 +70,37 @@ function login() {
         })
 
         return false;
+      });
+  }
+  
+
+
+
+    const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+// Exemplo de endpoint de login
+sketch.post("/login", async (req, res) => {
+    const { email, senha } = req.body;
+
+    // Valide o usuário no banco de dados (exemplo básico)
+    const usuario = await buscarUsuarioNoBanco(email);
+    if (!usuario) {
+        return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
     }
+
+    // Verifique a senha
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
+        return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
+    }
+
+    // Gere o token
+    const token = jwt.sign(
+        { id: usuario.id, email: usuario.email }, // Payload
+        process.env.JWT_SECRET,                  // Chave secreta
+        { expiresIn: "2h" }                      // Tempo de expiração
+    );
+
+    res.json({ token });
+});
