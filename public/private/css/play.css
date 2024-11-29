@@ -8,7 +8,7 @@
 
 /* PLAY */
 
-#play_section{
+#play_section {
   height: 100%;
   width: 100%;
   display: grid;
@@ -17,7 +17,7 @@
   /* display: none; */
 }
 
-#play_section .left{
+#play_section .left {
   height: 100%;
   width: 100%;
   padding: 25px;
@@ -26,79 +26,74 @@
   gap: 5%;
 }
 
-#play_section .left .draw{
-
-  
+#play_section .left .draw {
   height: 100%;
   width: 100%;
-  
+
   box-shadow: 0px 0px 15px #00243ca4;
 }
 
-#play_section .left .tools{
+#play_section .left .tools {
   background-color: #d9d9d9;
   height: 30%;
   width: 100%;
   border-radius: 20px;
   box-shadow: 0px 0px 15px #00243ca4;
   display: grid;
+  padding: 10px;
   grid-template-columns: min-content min-content min-content;
+  justify-content: space-between;
 }
 
 #play_section .left .tools .tool_box {
-  width: fit-content;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   padding: 10px;
+ 
   display: flex;
   align-items: center;
-
- 
+  gap: 15px;
 }
 
-.button__tool,
-.button__size {
-  width: 20px;
-  height: 45px;
-  border: none;
+#play_section .left .tools .tool_box .button_tool,
+#play_section .left .tools .tool_box .button_size {
   border-radius: 5px;
-  cursor: pointer;
+  background-color: #fff;
+  border: solid 2px #ffffff;
+  padding: 10px;
+  height: 50px;
+  width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
 }
 
-.button__tool span {
-  font-size: 1.8rem;
+#play_section .left .tools .tool_box .button_tool span {
+  font-size: 2rem;
   color: #000;
 }
 
-.button__tool:hover,
-.button__size:hover {
-  background-color: #f2f2f2;
+#play_section .left .tools .tool_box .button_tool:hover,
+#play_section .left .tools .tool_box .button_size:hover {
+  border: solid 2px #000;
+  scale: 1.2;
+  transition: ease 0.5s;
 }
 
-.input__color {
-  width: 45px;
-  height: 45px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 5px 7px;
+#play_section .left .tools .tool_box .button_tool .input__color {
+  height: 100%;
+  width: 100%;
 }
 
-.input__color::-webkit-color-swatch {
-  border-radius: 100px;
+#play_section .left .tools .tool_box .button_tool .input__color::-webkit-color-swatch {
+  border-radius: 100%;
 }
 
-.button__size {
-  padding: 10px;
-  height: auto;
+#play_section .left .tools .tool_box .button_size {
+  width: 100px;
+
 }
 
-.button__size span {
+#play_section .left .tools .tool_box .button_size span {
   width: 100%;
   height: 100%;
   background-color: #000;
@@ -106,62 +101,47 @@
   display: block;
 }
 
-.button__size[value="5"] span {
+#play_section .left .tools .tool_box #stroke_5 span {
   height: 5px;
 }
 
-.button__size[value="10"]  span {
+#play_section .left .tools .tool_box #stroke_10 span {
   height: 10px;
 }
 
-.button__size[value="20"] span {
+#play_section .left .tools .tool_box #stroke_20 span {
   height: 20px;
 }
-
-.button__size[value="30"] span {
+#play_section .left .tools .tool_box #stroke_30 span {
   height: 30px;
 }
 
 .active {
   background-color: #f2f2f2;
-}
+} 
 
-#play_section .right{
+#play_section .right {
   height: 100%;
   width: 100%;
   display: flex;
-
 }
 
-#play_section .right .answer{
-
+#play_section .right .answer {
   background-color: var(--second_color);
   height: 100%;
   width: 60%;
-
 }
 
-#play_section .right .ranking{
+#play_section .right .ranking {
   grid-area: ranking;
   background: var(--linear_gradient_3);
   height: 100%;
   width: 40%;
   box-shadow: -10px 0px 15px #00243ca4;
   border-left: solid 2px #00243c;
-
 }
 
-canvas {
-  width: 100%; /* Ajuste ao container */
-  height: 100%; /* Ajuste ao container */
-  display: block; /* Remove espaços extras */
-  background-color: #fff;
-  border-radius: 20px;
-
-}
 
 /* /PLAY */
 
 /* /MAIN */
-
-

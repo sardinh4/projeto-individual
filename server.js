@@ -1,4 +1,4 @@
-// Ambiente e Configuração
+// Ambiente e Configuração 
 var ambiente_processo = "desenvolvimento"; // Pode ser 'producao' ou 'desenvolvimento'
 var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.dev'; // Definindo o arquivo .env a ser usado
 require("dotenv").config({ path: caminho_env }); // Carrega as variáveis de ambiente do arquivo .env
@@ -10,19 +10,19 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const path = require("path");
 
-// Configuração do servidor e porta
-const PORTA_APP = process.env.APP_PORT || 3333;
-const HOST_APP = process.env.APP_HOST || "localhost";
-
-// Inicialização do servidor Express e Socket.IO
+// Configuração do servidor
 const app = express();
-const server = http.createServer(app);  // Correção aqui
-const io = new Server(server);  // Correção aqui
+const server = http.createServer(app);
+const io = new Server(server);
 
-// Variáveis globais para gerenciamento das salas e histórico de desenhos
-const salas = {};  // Para armazenar informações das salas
-const historicoDesenhos = {};  // Para armazenar o histórico de desenhos
-let contadorSalas = 1;  // Para incrementar as salas automaticamente
+const PORT = process.env.PORT || 3333;
+const HOST = process.env.HOST || "localhost";
+
+// Variáveis para gerenciamento de salas e histórico
+const salas = {};
+const historicoDesenhos = {};
+const usuarios = {}; // Rastreia a última sala de cada usuário
+let contadorSalas = 1;
 
 // Middleware
 app.use(express.json());
@@ -35,22 +35,28 @@ app.use(cors());
 // Roteamento
 var indexRouter = require("./src/routes/index");
 var userRouter = require("./src/routes/user");
+var roonsRouter = require("./src/routes/roons");
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
+app.use("/roons", roonsRouter);
 
-// Inicialização do WebSocket
-io.on('connection', (socket) => {
-    console.log('Usuário conectado:', socket.id);
+// WebSocket - Lógica do servidor Socket.IO
+io.on("connection", (socket) => {
+    console.log(`Usuário conectado: ${socket.id}`);
 
-    // Evento para entrar em uma sala
-    socket.on('entrarNaSala', (sala) => {
-        if (sala) {
-            if (!salas[sala]) salas[sala] = { usuarios: [], desenhadorAtual: null };
-            if (salas[sala].usuarios.length < 10) {
+    // Evento para entrar em uma sala específica ou aleatória
+    socket.on("entrarNaSala", (sala) => {
+        const salaAnterior = usuarios[socket.id] || sala;
+
+        if (salaAnterior && salas[salaAnterior]) {
+            adicionarUsuarioNaSala(socket, salaAnterior);
+            delete usuarios[socket.id];
+        } else if (sala) {
+            if (salas[sala]) {
                 adicionarUsuarioNaSala(socket, sala);
             } else {
-                socket.emit('erroSala', 'Sala cheia');
+                socket.emit("erroSala", "Sala não encontrada.");
             }
         } else {
             const salaDisponivel = buscarSalaComVaga() || criarNovaSala();
@@ -58,42 +64,58 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Evento para trocar o desenhador
-    socket.on('trocarDesenhador', (sala) => {
-        if (salas[sala] && salas[sala].usuarios.includes(socket.id)) {
-            if (salas[sala].desenhadorAtual === socket.id) {
-                salas[sala].desenhadorAtual = null;
-                io.to(sala).emit('permissaoDesenho', null);
-            } else {
-                salas[sala].desenhadorAtual = socket.id;
-                io.to(sala).emit('permissaoDesenho', socket.id);
-            }
-        }
+    // Evento para listar todas as salas disponíveis
+    socket.on("listarSalas", () => {
+        const salasDisponiveis = Object.keys(salas).map((sala) => ({
+            nome: sala,
+            usuarios: salas[sala].usuarios.length,
+        }));
+        socket.emit("salasDisponiveis", salasDisponiveis);
     });
 
-    // Evento para desenhar
-    socket.on('desenhar', (data, sala) => {
-        if (salas[sala] && salas[sala].desenhadorAtual === socket.id) {
+    // Evento para desenhar no canvas
+    socket.on("desenhar", (data, sala) => {
+        if (salas[sala]?.desenhadorAtual === socket.id) {
             historicoDesenhos[sala].push(data);
-            socket.to(sala).emit('desenharNoCanvas', data);
+            socket.to(sala).emit("desenharNoCanvas", data);
         }
     });
 
-    // Evento de desconexão
-    socket.on('disconnect', () => {
-        console.log('Usuário desconectado:', socket.id);
+    // Evento para limpar o canvas
+    socket.on("limparCanvas", (sala) => {
+        if (salas[sala]?.desenhadorAtual === socket.id) {
+            historicoDesenhos[sala] = [];
+            io.to(sala).emit("limparCanvas");
+        }
+    });
+
+    // Evento para alternar o desenhador
+    socket.on("trocarDesenhador", (sala) => {
+        if (salas[sala]?.usuarios.includes(socket.id)) {
+            salas[sala].desenhadorAtual =
+                salas[sala].desenhadorAtual === socket.id ? null : socket.id;
+            io.to(sala).emit("permissaoDesenho", salas[sala].desenhadorAtual);
+        }
+    });
+
+    // Desconexão do usuário
+    socket.on("disconnect", () => {
+        console.log(`Usuário desconectado: ${socket.id}`);
         for (let sala in salas) {
             if (salas[sala].usuarios.includes(socket.id)) {
                 salas[sala].usuarios = salas[sala].usuarios.filter((id) => id !== socket.id);
+
+                // Salva a última sala do usuário
+                usuarios[socket.id] = sala;
+
                 if (salas[sala].desenhadorAtual === socket.id) {
                     salas[sala].desenhadorAtual = null;
-                    io.to(sala).emit('permissaoDesenho', null);
+                    io.to(sala).emit("permissaoDesenho", null);
                 }
+
                 if (salas[sala].usuarios.length === 0) {
                     delete salas[sala];
                     delete historicoDesenhos[sala];
-                } else {
-                    io.to(sala).emit('atualizarSala', salas[sala].usuarios);
                 }
             }
         }
@@ -102,28 +124,30 @@ io.on('connection', (socket) => {
 
 // Funções auxiliares
 function adicionarUsuarioNaSala(socket, sala) {
-    if (!salas[sala]) salas[sala] = { usuarios: [], desenhadorAtual: null };
-    if (!historicoDesenhos[sala]) historicoDesenhos[sala] = [];
+    if (!salas[sala]) {
+        salas[sala] = { usuarios: [], desenhadorAtual: null };
+        historicoDesenhos[sala] = [];
+    }
 
     salas[sala].usuarios.push(socket.id);
     socket.join(sala);
-    socket.emit('atualizarCanvas', historicoDesenhos[sala]);
 
+    // Envia histórico e confirma entrada
+    socket.emit("atualizarCanvas", historicoDesenhos[sala]);
+    socket.emit("salaConfirmada", sala);
+
+    // Define desenhador inicial, se necessário
     if (!salas[sala].desenhadorAtual) {
         salas[sala].desenhadorAtual = socket.id;
-        io.to(sala).emit('permissaoDesenho', socket.id);
+        io.to(sala).emit("permissaoDesenho", socket.id);
     }
 
-    socket.emit('salaConfirmada', sala);
-    io.to(sala).emit('atualizarSala', salas[sala].usuarios);
-    console.log(`Usuário ${socket.id} entrou na sala ${sala}.`);
+    io.to(sala).emit("atualizarSala", salas[sala].usuarios);
 }
 
 function buscarSalaComVaga() {
     for (let sala in salas) {
-        if (salas[sala].usuarios.length < 10) {
-            return sala;
-        }
+        if (salas[sala].usuarios.length < 10) return sala;
     }
     return null;
 }
@@ -136,7 +160,7 @@ function criarNovaSala() {
     return novaSala;
 }
 
-// Inicia o servidor
-server.listen(PORTA_APP, () => {
-    console.log(`Servidor rodando em http://${HOST_APP}:${PORTA_APP}`);
+// Inicialização do servidor
+server.listen(PORT, () => {
+    console.log(`Servidor rodando em http://${HOST}:${PORT}`);
 });

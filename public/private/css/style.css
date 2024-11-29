@@ -106,6 +106,11 @@ body {
   grid-template-columns: 20% 1fr;
   column-gap: 10px;
   align-items: baseline;
+  cursor: pointer;
+}
+
+.menu li:hover span {
+  text-decoration: underline;
 }
 
 /* /MENU */
@@ -119,7 +124,6 @@ body {
   width: 100%;
   background: var(--linear_gradient_2);
   position: relative;
-  display: none;
 }
 
 #circle1 {
@@ -215,7 +219,7 @@ body {
   border-radius: 50px;
   padding: 50px;
   overflow: hidden;
-  display: none;
+  /*  */
 }
 
 #home_section #circle1 {
@@ -259,17 +263,17 @@ body {
   filter: blur(5px);
 }
 
-#home_section #black_bg{
+#home_section #black_bg {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #00111c 0%,  #00243c00 100%);
+  background: linear-gradient(90deg, #00111c 0%, #00243c00 100%);
 }
 
 #home_right_section_contant {
   z-index: 1;
   display: grid;
-  
+
   grid-template-rows: min-content min-content min-content;
   grid-auto-columns: auto auto;
   column-gap: 5%;
@@ -277,7 +281,7 @@ body {
     "h2 h2"
     "p p"
     "btn_random_game btn_rooms";
-    align-content: space-between;
+  align-content: space-between;
 }
 
 #home_right_section_contant h2 {
@@ -301,14 +305,11 @@ body {
 #home_right_section_contant .btn_random_game {
   grid-area: btn_random_game;
   background-color: var(--second_color);
-  
 }
-#home_right_section_contant .btn_rooms {
+#home_right_section_contant .btn_list_rooms {
   grid-area: btn_rooms;
   background-color: var(--principal_color);
   color: var(--second_color);
- 
-  
 }
 
 #home_left_section_contant {
@@ -333,9 +334,91 @@ body {
 
 /* /HOME */
 
+/* ROONS */
+
+#roons_section {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content min-content;
+  row-gap: 20px;
+  align-content: space-between;
+}
+
+#roons_section h2 {
+  font-size: 4rem;
+  text-align: center;
+  color: var(--first_color);
+}
+
+#roons_section #roons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  
+}
+
+#roons_section #roons div {
+  padding: 50px;
+  height: fit-content;
+  width: fit-content;
+  box-shadow: 0px 0px 15px #00243ca4;
+  color: var(--first_color);
+  border-radius: 15px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: ease 0.5s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#roons_section #roons div span {
+  color: var(--first_color);
+}
+
+#roons_section #roons div:hover {
+  scale: 1.1;
+  background-color: var(--first_color);
+}
+
+#roons_section #roons div:hover span{
+  color: var(--principal_color);
+}
+
+#roons_section .btn_conatainer {
+  display: flex;
+  justify-content: end;
+  gap: 20px;
+}
+
+#roons_section .btn_conatainer button {
+  font-size: 2rem;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  color: var(--principal_color);
+}
+
+#roons_section #btn_new_roon {
+  background-color: var(--third_color);
+}
+
+#roons_section #btn_random_roon {
+  background-color: var(--second_color);
+}
+
+
+
+/* /ROONS */
+
 /* PLAY */
 
-#play_section{
+#play_section {
   height: 100%;
   width: 100%;
   display: grid;
@@ -344,7 +427,7 @@ body {
   /* display: none; */
 }
 
-#play_section .left{
+#play_section .left {
   height: 100%;
   width: 100%;
   padding: 25px;
@@ -353,64 +436,139 @@ body {
   gap: 5%;
 }
 
-#play_section .left .draw{
-
-  background-color: #fff;
+#play_section .left .draw {
   height: 100%;
   width: 100%;
-  border-radius: 20px;
+
   box-shadow: 0px 0px 15px #00243ca4;
 }
 
-#play_section .left .tools{
+#play_section .left .tools {
   background-color: #d9d9d9;
   height: 30%;
   width: 100%;
   border-radius: 20px;
   box-shadow: 0px 0px 15px #00243ca4;
+  display: grid;
+  padding: 10px;
+  grid-template-columns: min-content min-content min-content;
+  justify-content: space-between;
 }
 
-#play_section .right{
+#play_section .left .tools .tool_box {
+  border-radius: 10px;
+  padding: 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#play_section .left .tools .tool_box .button_tool,
+#play_section .left .tools .tool_box .button_size {
+  border-radius: 5px;
+  background-color: #fff;
+  border: solid 2px #ffffff;
+  padding: 10px;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#play_section .left .tools .tool_box .button_tool span {
+  font-size: 2rem;
+  color: #000;
+}
+
+#play_section .left .tools .tool_box .button_tool:hover,
+#play_section .left .tools .tool_box .button_size:hover {
+  border: solid 2px #000;
+  scale: 1.2;
+  transition: ease 0.5s;
+}
+
+#play_section .left .tools .tool_box .button_tool .input__color {
+  height: 100%;
+  width: 100%;
+}
+
+#play_section
+  .left
+  .tools
+  .tool_box
+  .button_tool
+  .input__color::-webkit-color-swatch {
+  border-radius: 100%;
+}
+
+#play_section .left .tools .tool_box .button_size {
+  width: 100px;
+}
+
+#play_section .left .tools .tool_box .button_size span {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  border-radius: 100px;
+  display: block;
+}
+
+#play_section .left .tools .tool_box #stroke_5 span {
+  height: 5px;
+}
+
+#play_section .left .tools .tool_box #stroke_10 span {
+  height: 10px;
+}
+
+#play_section .left .tools .tool_box #stroke_20 span {
+  height: 20px;
+}
+#play_section .left .tools .tool_box #stroke_30 span {
+  height: 30px;
+}
+
+.active {
+  background-color: #f2f2f2;
+}
+
+#play_section .right {
   height: 100%;
   width: 100%;
   display: flex;
-
 }
 
-#play_section .right .answer{
-
+#play_section .right .answer {
   background-color: var(--second_color);
   height: 100%;
   width: 60%;
-
 }
 
-#play_section .right .ranking{
+#play_section .right .ranking {
   grid-area: ranking;
   background: var(--linear_gradient_3);
   height: 100%;
   width: 40%;
   box-shadow: -10px 0px 15px #00243ca4;
   border-left: solid 2px #00243c;
-
 }
-
 
 /* /PLAY */
 
 /* DRAW */
 
-#draw_section{
+#draw_section {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr min-content;
   row-gap: 5%;
   height: 100%;
   width: 100%;
-  display: none;
 }
 
-#draw_section .top{
+#draw_section .top {
   display: grid;
   grid-template-columns: 1fr 20%;
   height: 100%;
@@ -420,29 +578,28 @@ body {
   box-shadow: 0px 0px 15px #00243ca4;
 }
 
-#draw_section .top .draw{
+#draw_section .top .draw {
   height: 100%;
   width: 100%;
   background-color: #fff;
 }
 
-#draw_section .top .tools{
+#draw_section .top .tools {
   height: 100%;
   width: 100%;
   background-color: #d9d9d9;
   box-shadow: 0px 0px 15px #00243ca4;
 }
 
-#draw_section .bottom{
+#draw_section .bottom {
   display: flex;
   justify-content: right;
   gap: 20px;
   height: 100%;
   width: 100%;
- 
 }
 
-#draw_section .bottom button{
+#draw_section .bottom button {
   height: fit-content;
   width: fit-content;
   padding: 10px 40px;
@@ -452,11 +609,11 @@ body {
   border-radius: 15px;
 }
 
-#draw_section .bottom .btn_save{
-  background: var(--third_color); 
+#draw_section .bottom .btn_save {
+  background: var(--third_color);
 }
 
-#draw_section .bottom .btn_delete{
+#draw_section .bottom .btn_delete {
   background: var(--second_color);
 }
 

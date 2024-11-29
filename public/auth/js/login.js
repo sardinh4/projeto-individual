@@ -48,6 +48,7 @@ function login() {
                 resposta.json().then(json => {
                     console.log(json);
                     console.log(JSON.stringify(json));
+                    sessionStorage.username = JSON.stringify(json.username);
                     
                     setTimeout(function () {
                         window.location = "../../private/index.html";

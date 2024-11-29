@@ -63,6 +63,7 @@ function authenticate(req, res) {
                         res.json({
                             email: resultadoAutenticar[0].email,
                             password: resultadoAutenticar[0].password,
+                            username: resultadoAutenticar[0].username,
                            
                         });                   
                     } else if (resultadoAutenticar.length == 0) {
