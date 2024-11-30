@@ -7,7 +7,7 @@ use sketchup;
 create table roon(
 	idRoon varchar(45) primary key,
 	criationDate timestamp default NOW(),
-    qtdUsers int default 0,
+    qtdUsers int,
     constraint cheakQtdUsers check (qtdUsers > 0 and qtdUsers <= 10),
     status varchar(9) default 'active',
     constraint cheakStatus check (status in ('active', 'full', 'closed'))
@@ -32,20 +32,21 @@ delete from roon where idRoon = 'room3';
 
 create table user (
 	idUser int primary key auto_increment unique,
-    firstName varchar(45),
     username varchar(45),
     email varchar(120),
     password char(8),
     registerData datetime default now()
 );
 
-insert into user value (default, 'Leonardo', 'sardinha', 'leonardo_sardinha@outlook.com', 'Teste@28', default);
+insert into user value (default, 'sardinha', 'leonardo_sardinha@outlook.com', 'Teste@28', default);
 
 create table roonHistori (
 	fkRoon varchar(45),
     fkUser int,
     constraint fkRoonRoonHistori foreign key (fkRoon) references roon(idRoon),
     constraint fkUserRoonHistori foreign key (fkUser) references user(idUser),
+    ranking int,
+    points int,
     date timestamp default NOW()
 );
 
@@ -56,7 +57,6 @@ create table draw (
     constraint pkComposta primary key (idDraw, fkUser),
     draw blob,
     createData datetime default now()
-    
 );
 
 select * from user;
