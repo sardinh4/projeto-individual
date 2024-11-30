@@ -279,7 +279,7 @@ body {
   grid-template-areas:
     "h2 h2"
     "p p"
-    "btn_random_game btn_rooms";
+    "home_btn_new_roon btn_list_rooms";
   align-content: space-between;
 }
 
@@ -301,12 +301,12 @@ body {
   font-weight: bold;
 }
 
-#home_right_section_contant .btn_random_game {
-  grid-area: btn_random_game;
+#home_right_section_contant #home_btn_new_roon {
+  grid-area: home_btn_new_roon;
   background-color: var(--second_color);
 }
 #home_right_section_contant .btn_list_rooms {
-  grid-area: btn_rooms;
+  grid-area: btn_list_rooms;
   background-color: var(--principal_color);
   color: var(--second_color);
 }
@@ -333,9 +333,9 @@ body {
 
 /* /HOME */
 
-/* ROONS */
+/* rooms */
 
-#roons_section {
+#rooms_section {
   width: 100%;
   height: 100%;
   display: grid;
@@ -345,20 +345,20 @@ body {
   align-content: space-between;
 }
 
-#roons_section h2 {
+#rooms_section h2 {
   font-size: 4rem;
   text-align: center;
   color: var(--first_color);
 }
 
-#roons_section #roons {
+#rooms_section #rooms {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   align-items: center;
 }
 
-#roons_section #roons div {
+#rooms_section #rooms div {
   padding: 50px;
   height: fit-content;
   width: fit-content;
@@ -374,26 +374,26 @@ body {
   justify-content: center;
 }
 
-#roons_section #roons div span {
+#rooms_section #rooms div span {
   color: var(--first_color);
 }
 
-#roons_section #roons div:hover {
+#rooms_section #rooms div:hover {
   scale: 1.1;
   background-color: var(--first_color);
 }
 
-#roons_section #roons div:hover span {
+#rooms_section #rooms div:hover span {
   color: var(--principal_color);
 }
 
-#roons_section .btn_conatainer {
+#rooms_section .btn_conatainer {
   display: flex;
   justify-content: end;
   gap: 20px;
 }
 
-#roons_section .btn_conatainer button {
+#rooms_section .btn_conatainer button {
   font-size: 2rem;
   text-transform: uppercase;
   padding: 10px 20px;
@@ -402,15 +402,12 @@ body {
   color: var(--principal_color);
 }
 
-#roons_section #btn_new_roon {
-  background-color: var(--third_color);
-}
-
-#roons_section #btn_random_roon {
+#rooms_section #rooms_btn_new_roon {
   background-color: var(--second_color);
 }
 
-/* /ROONS */
+
+/* /rooms */
 
 /* PLAY */
 

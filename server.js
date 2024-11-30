@@ -1,6 +1,6 @@
-// Ambiente e Configuração 
+// Ambiente e Configuração
 var ambiente_processo = "desenvolvimento"; // Pode ser 'producao' ou 'desenvolvimento'
-var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.dev'; // Definindo o arquivo .env a ser usado
+var caminho_env = ambiente_processo === "producao" ? ".env" : ".env.dev"; // Definindo o arquivo .env a ser usado
 require("dotenv").config({ path: caminho_env }); // Carrega as variáveis de ambiente do arquivo .env
 
 // Importação de módulos
@@ -29,65 +29,69 @@ app.use(cors());
 // Roteamento
 var indexRouter = require("./src/routes/index");
 var userRouter = require("./src/routes/user");
-var roonsRouter = require("./src/routes/roons");
+var roomsRouter = require("./src/routes/rooms");
+var roomsHistoryRouter = require("./src/routes/roomsHistory");
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
-app.use("/roons", roonsRouter);
+app.use("/rooms", roomsRouter);
+app.use("/roomsHistory", roomsHistoryRouter);
 
-// Definindo as variáveis para gerenciamento de salas
-let rooms = {}; // Armazena as salas e seus respectivos usuários
-let roomCount = 1; // Contador de salas
-let currentCanvasState = null; // Variável para armazenar o estado atual do canvas
+// SOCKET.IO
 
-// Configurar o Socket.IO
-io.on('connection', (socket) => {
-    console.log('Novo cliente conectado:', socket.id);
+let roomsCanvasState = {}; // Armazena o estado do canvas para cada sala
 
-    // Atribui o usuário a uma sala
-    let roomId = `room_${roomCount}`;
-    
-    // Se a sala não existe, cria uma nova
-    if (!rooms[roomId]) {
-        rooms[roomId] = [];
+io.on("connection", (socket) => {
+  console.log("Novo cliente conectado:", socket.id);
+
+  // Criar uma nova sala
+  socket.on("create_room", (roomId, callback) => {
+    const rooms = io.sockets.adapter.rooms;
+
+    if (rooms.has(roomId)) {
+      return callback({ success: false, message: "Sala já existe." });
     }
 
-    // Adiciona o cliente à sala
-    rooms[roomId].push(socket.id);
+    socket.join(roomId);
+    console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
+    callback({ success: true, roomId });
+  });
+
+  // Entrar em uma sala existente
+  socket.on("join_room", (roomId, callback) => {
+    const rooms = io.sockets.adapter.rooms;
+
+    if (!rooms.has(roomId)) {
+      return callback({ success: false, message: "Sala não encontrada." });
+    }
+
     socket.join(roomId);
     console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
 
-    // Quando a sala atingir 10 usuários, cria uma nova sala
-    if (rooms[roomId].length === 10) {
-        roomCount++; // Cria nova sala
-        console.log(`Sala ${roomId} cheia. Criando nova sala: room_${roomCount}`);
+    // Envia o estado atual do canvas daquela sala (se houver)
+    if (roomsCanvasState[roomId]) {
+      socket.emit("initial_canvas_state", roomsCanvasState[roomId]);
     }
 
-    // Envia o id da sala para o cliente
-    socket.emit('joined_room', roomId);
+    callback({ success: true, roomId });
+  });
 
-    // Envia o estado atual do canvas (se houver) para o novo cliente
-    if (currentCanvasState) {
-        socket.emit('initial_canvas_state', currentCanvasState);
-    }
+  // Reenvia dados do canvas para todos os clientes na sala, exceto para o remetente
+  socket.on("draw_data", (roomId, data) => {
+    // Atualiza o estado do canvas daquela sala
+    roomsCanvasState[roomId] = data; 
 
-    // Reenvia dados do canvas para todos os clientes na sala, exceto para o remetente
-    socket.on('draw_data', (data) => {
-        currentCanvasState = data; // Atualiza o estado do canvas
-        socket.broadcast.to(roomId).emit('draw_data', data);
-    });
+    // Envia os dados para todos os clientes na sala
+    socket.to(roomId).emit("draw_data", data);
+  });
 
-    // Quando o cliente desconectar, remove-o da sala
-    socket.on('disconnect', () => {
-        rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
-        console.log(`Usuário ${socket.id} saiu da sala ${roomId}`);
-        if (rooms[roomId].length === 0) {
-            delete rooms[roomId]; // Deleta sala vazia
-        }
-    });
+  // Gerenciar desconexão
+  socket.on("disconnect", () => {
+    console.log(`Cliente desconectado: ${socket.id}`);
+  });
 });
 
 // Inicialização do servidor
 server.listen(PORT, () => {
-    console.log(`Servidor rodando em http://${HOST}:${PORT}`);
+  console.log(`Servidor rodando em http://${HOST}:${PORT}`);
 });

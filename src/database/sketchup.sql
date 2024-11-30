@@ -4,8 +4,8 @@ create database sketchup;
 
 use sketchup;
 
-create table roon(
-	idRoon varchar(45) primary key,
+create table room(
+	idRoom varchar(45) primary key,
 	criationDate timestamp default NOW(),
     qtdUsers int,
     constraint cheakQtdUsers check (qtdUsers > 0 and qtdUsers <= 10),
@@ -14,7 +14,7 @@ create table roon(
 
 );
 
-INSERT INTO roon (idRoon, qtdUsers, status)
+INSERT INTO room (idRoom, qtdUsers, status)
 VALUES 
 ('room1', 5, 'active'),
 ('room2', 10, 'full'),
@@ -22,12 +22,12 @@ VALUES
 ('room4', 1, 'active'),  
 ('room5', 8, 'closed');
 
-INSERT INTO roon (idRoon, qtdUsers, status)
+INSERT INTO room (idRoom, qtdUsers, status)
 VALUES 
 ('room6', 5, 'active'),
 ('room7', 10, 'active');
 
-delete from roon where idRoon = 'room3';
+delete from room where idRoom = 'room3';
 
 
 create table user (
@@ -40,11 +40,11 @@ create table user (
 
 insert into user value (default, 'sardinha', 'leonardo_sardinha@outlook.com', 'Teste@28', default);
 
-create table roonHistori (
-	fkRoon varchar(45),
+create table roomHistori (
+	fkRoom varchar(45),
     fkUser int,
-    constraint fkRoonRoonHistori foreign key (fkRoon) references roon(idRoon),
-    constraint fkUserRoonHistori foreign key (fkUser) references user(idUser),
+    constraint fkRoomRoomHistori foreign key (fkRoom) references room(idRoom),
+    constraint fkUserRoomHistori foreign key (fkUser) references user(idUser),
     ranking int,
     points int,
     date timestamp default NOW()
