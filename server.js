@@ -35,28 +35,59 @@ app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/roons", roonsRouter);
 
+// Definindo as variáveis para gerenciamento de salas
+let rooms = {}; // Armazena as salas e seus respectivos usuários
+let roomCount = 1; // Contador de salas
+let currentCanvasState = null; // Variável para armazenar o estado atual do canvas
 
 // Configurar o Socket.IO
 io.on('connection', (socket) => {
     console.log('Novo cliente conectado:', socket.id);
 
-    // Reenviar dados do canvas para todos os clientes
-    socket.on('draw_data', (data) => {
-      socket.broadcast.emit('draw_data', data);
-  });
+    // Atribui o usuário a uma sala
+    let roomId = `room_${roomCount}`;
+    
+    // Se a sala não existe, cria uma nova
+    if (!rooms[roomId]) {
+        rooms[roomId] = [];
+    }
 
+    // Adiciona o cliente à sala
+    rooms[roomId].push(socket.id);
+    socket.join(roomId);
+    console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
+
+    // Quando a sala atingir 10 usuários, cria uma nova sala
+    if (rooms[roomId].length === 10) {
+        roomCount++; // Cria nova sala
+        console.log(`Sala ${roomId} cheia. Criando nova sala: room_${roomCount}`);
+    }
+
+    // Envia o id da sala para o cliente
+    socket.emit('joined_room', roomId);
+
+    // Envia o estado atual do canvas (se houver) para o novo cliente
+    if (currentCanvasState) {
+        socket.emit('initial_canvas_state', currentCanvasState);
+    }
+
+    // Reenvia dados do canvas para todos os clientes na sala, exceto para o remetente
+    socket.on('draw_data', (data) => {
+        currentCanvasState = data; // Atualiza o estado do canvas
+        socket.broadcast.to(roomId).emit('draw_data', data);
+    });
+
+    // Quando o cliente desconectar, remove-o da sala
     socket.on('disconnect', () => {
-        console.log('Cliente desconectado:', socket.id);
+        rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
+        console.log(`Usuário ${socket.id} saiu da sala ${roomId}`);
+        if (rooms[roomId].length === 0) {
+            delete rooms[roomId]; // Deleta sala vazia
+        }
     });
 });
-
 
 // Inicialização do servidor
 server.listen(PORT, () => {
     console.log(`Servidor rodando em http://${HOST}:${PORT}`);
 });
-
-
-
-
-
