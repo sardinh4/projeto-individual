@@ -12,10 +12,9 @@ function authenticate(email, password) {
 
 
 // Coloque os mesmos parâmetros aqui. Vá para a var instrucaoSql
-function register(name, userName, email, password) {
+function register(userName, email, password) {
   console.log(
     "ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrar():",
-    name,
     userName,
     email,
     password
@@ -25,8 +24,8 @@ function register(name, userName, email, password) {
   //  e na ordem de inserção dos dados.
 
   var instrucaoSql = `
-  INSERT INTO user (firstName, userName, email, password, registerData) 
-  VALUES ('${name}', '${userName}', '${email}', '${password}', NOW());
+  INSERT INTO user (username, email, password) 
+  VALUES ('${userName}', '${email}', '${password}');
 `;
 
   console.log("Executando a instrução SQL 1:\n" + instrucaoSql);

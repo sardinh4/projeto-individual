@@ -522,15 +522,18 @@ body {
   height: 10px;
 }
 
+#play_section .left .tools .tool_box #stroke_15 span {
+  height: 15px;
+}
 #play_section .left .tools .tool_box #stroke_20 span {
   height: 20px;
 }
-#play_section .left .tools .tool_box #stroke_30 span {
-  height: 30px;
-}
 
-.active {
-  background-color: #f2f2f2;
+#play_section .left .tools .tool_box .active,
+#play_section .left .tools .tool_box .active {
+  background-color: var(--second_color);
+  scale: 1.1;
+  
 }
 
 #play_section .right {

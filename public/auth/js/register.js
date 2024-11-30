@@ -24,10 +24,8 @@ document
     event.preventDefault(); // EVITA O ENVIO IMEDIATO DO FORMULÁRIO QUANDO APERTADO O BOTÃO DE SUBMIT
 
     if (
-      input_nome.value == "" ||
       input_nome_usuario.value == "" ||
       input_email_cadastro.value == "" ||
-      input_confirmacao_email.value == "" ||
       input_senha_cadastro.value == "" ||
       input_confirmacao_senha.value == ""
     ) {
@@ -94,8 +92,6 @@ document
 
 function cadastrar() {
 
-  // Recupera o valor do input com o ID 'input_nome'
-  const name = document.getElementById("input_nome").value;
   // Recupera o valor do input com o ID 'input_nome_usuario'
   const userName = document.getElementById("input_nome_usuario").value;
   // Recupera o valor do input com o ID 'input_email_cadastro'
@@ -111,7 +107,6 @@ function cadastrar() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      nameServer: name, // Nome do usuário
       userNameServer: userName, // userName do usuário
       emailServer: email, // E-mail do usuário
       passwordServer: password, // Senha do usuário

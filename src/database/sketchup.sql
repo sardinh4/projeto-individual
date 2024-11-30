@@ -32,8 +32,8 @@ delete from roon where idRoon = 'room3';
 
 create table user (
 	idUser int primary key auto_increment unique,
-    username varchar(45),
-    email varchar(120),
+    username varchar(45) unique,
+    email varchar(120) unique,
     password char(8),
     registerData datetime default now()
 );
