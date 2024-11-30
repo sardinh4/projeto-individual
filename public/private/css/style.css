@@ -202,8 +202,7 @@ body {
   width: 100%;
   overflow: hidden;
   position: relative;
-  /* padding: 50px; */
-  padding: 20px;
+  padding: 30px;
 }
 
 /* HOME */
@@ -357,7 +356,6 @@ body {
   flex-wrap: wrap;
   gap: 20px;
   align-items: center;
-  
 }
 
 #roons_section #roons div {
@@ -385,7 +383,7 @@ body {
   background-color: var(--first_color);
 }
 
-#roons_section #roons div:hover span{
+#roons_section #roons div:hover span {
   color: var(--principal_color);
 }
 
@@ -412,8 +410,6 @@ body {
   background-color: var(--second_color);
 }
 
-
-
 /* /ROONS */
 
 /* PLAY */
@@ -424,7 +420,6 @@ body {
   display: grid;
   grid-template-columns: 1fr 25%;
   grid-template-rows: 1fr;
-  /* display: none; */
 }
 
 #play_section .left {
@@ -439,8 +434,13 @@ body {
 #play_section .left .draw {
   height: 100%;
   width: 100%;
-
+  border-radius: 25px;
   box-shadow: 0px 0px 15px #00243ca4;
+}
+
+#play_section .left .draw #canvas {
+  height: 100%;
+  width: 100%;
 }
 
 #play_section .left .tools {
@@ -458,7 +458,6 @@ body {
 #play_section .left .tools .tool_box {
   border-radius: 10px;
   padding: 10px;
-
   display: flex;
   align-items: center;
   gap: 15px;

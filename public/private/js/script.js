@@ -17,12 +17,12 @@ function bootButtons() {
   )}`;
   // HOME
   document.getElementById("home_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "home_section", "grid");
+    configureScreenExibition(sections, "home_section", "30px");
   });
 
   //PLAY
   document.getElementById("play_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "roons_section", "grid");
+    configureScreenExibition(sections, "roons_section", "30px");
 
     // Iniciar o setInterval para exibir as salas enquanto 'roons_section' estiver visível
     startRoonsInterval();
@@ -30,22 +30,22 @@ function bootButtons() {
 
   // DRAW
   document.getElementById("draw_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "draw_section", "grid");
+    configureScreenExibition(sections, "draw_section", "30px");
   });
 
   // MY GALERY
   document.getElementById("my_galery_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "my_galery_section", "grid");
+    configureScreenExibition(sections, "my_galery_section", 0);
   });
 
   // MY PROGREES
   document.getElementById("my_progrees_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "my_progress_section", "grid");
+    configureScreenExibition(sections, "my_progress_section", 0);
   });
 
   // CONFIGURATION
   document.getElementById("configuration_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "configuration_section", "grid");
+    configureScreenExibition(sections, "configuration_section", 0);
   });
 
   // OUT
@@ -55,12 +55,14 @@ function bootButtons() {
 
   // RANDOM ROON
   document.getElementById("btn_random_game").addEventListener("click", () => {
-    configureScreenExibition(sections, "play_section", "grid");
+    configureScreenExibition(sections, "play_section", 0);
+  
   });
 
   // LIST ROON
   document.getElementById("btn_list_rooms").addEventListener("click", () => {
-    configureScreenExibition(sections, "roons_section", "grid");
+    configureScreenExibition(sections, "roons_section", "30px");
+    
 
     // Iniciar o setInterval para exibir as salas enquanto 'roons_section' estiver visível
     startRoonsInterval();
@@ -68,7 +70,7 @@ function bootButtons() {
 
   // NEW ROON
   document.getElementById("btn_new_roon").addEventListener("click", () => {
-    configureScreenExibition(sections, "play_section", "grid");
+    configureScreenExibition(sections, "play_section", 0);
 
     // Limpar o setInterval quando mudar a seção
     stopRoonsInterval();
@@ -76,19 +78,20 @@ function bootButtons() {
 
   // RANDOM ROON
   document.getElementById("btn_random_roon").addEventListener("click", () => {
-    configureScreenExibition(sections, "play_section", "grid");
+    configureScreenExibition(sections, "play_section", 0);
 
     // Limpar o setInterval quando mudar a seção
     stopRoonsInterval();
   });
 }
 
-function configureScreenExibition(sections, idSection, display) {
+function configureScreenExibition(sections, idSection, padding) {
   hideAllSections(sections);
-  showSection(idSection, display);
+  showSection(idSection, padding);
 
   // Se a seção exibida for 'roons_section', iniciar o setInterval
-  if (idSection === "roons_section" && display === "grid") {
+  if (idSection === "roons_section" && document.getElementById("roons_section").style.display === "grid") {
+    showRoons();
     startRoonsInterval();
   } else {
     // Se não for 'roons_section', garantir que o setInterval seja limpo
@@ -96,8 +99,9 @@ function configureScreenExibition(sections, idSection, display) {
   }
 }
 
-function showSection(idSection, display) {
-  document.getElementById(`${idSection}`).style.display = `${display}`;
+function showSection(idSection, padding) {
+  document.getElementById(`${idSection}`).style.display = `grid`;
+  document.getElementById("main").style.padding = padding;
 }
 
 function hideAllSections(sections) {
@@ -207,3 +211,18 @@ function listRoons() {
       console.log("Erro na requisição:", erro);
     });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

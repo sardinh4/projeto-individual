@@ -1,42 +1,26 @@
-// Configuração do Socket.IO
-const socket = io("http://localhost:3333");
+let socket;
 
-let salaAtual = null;
-
-// Reconectar ao servidor e solicitar entrada na última sala
-socket.on("connect", () => {
-    console.log("Conectado ao servidor.");
-    socket.emit("entrarNaSala", salaAtual); // Tenta reconectar à sala anterior
+document.getElementById('btn_random_game').addEventListener('click', () => {
+    if (!socket || socket.disconnected) {
+        socket = io(); // Conectar ao servidor Socket.IO
+        
+        // Escutar eventos do canvas
+        socket.on('draw_data', (data) => {
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = data;
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+            };
+        });
+    }
 });
 
-// Receber confirmação de entrada na sala
-socket.on("salaConfirmada", (sala) => {
-    salaAtual = sala;
-    console.log(`Você entrou na sala ${sala}`);
-});
-
-// Atualizar o canvas com eventos recebidos
-socket.on("desenharNoCanvas", ({ x, y, desenharDeFato, tool, size, color }) => {
-    canvasHandlers.atualizarDesenhoViaSocket(x, y, desenharDeFato, tool, size, color);
-});
-
-socket.on("limparCanvas", () => {
-    canvasHandlers.limparCanvas();
-});
-
-socket.on("atualizarCanvas", (historico) => {
-    historico.forEach(({ x, y, desenharDeFato, tool, size, color }) => {
-        canvasHandlers.atualizarDesenhoViaSocket(x, y, desenharDeFato, tool, size, color);
+// Desconectar ao clicar em qualquer botão do menu
+document.querySelectorAll('.menu_nav_btn').forEach((button) => {
+    button.addEventListener('click', () => {
+        if (socket && socket.connected) {
+            socket.disconnect();
+        }
     });
 });
-
-// Emissão de eventos para o servidor
-const socketHandlers = {
-    emitirDesenho: (x, y, desenharDeFato, tool, size, color) => {
-        socket.emit("desenhar", { x, y, desenharDeFato, tool, size, color }, salaAtual);
-    },
-
-    limparCanvas: () => {
-        socket.emit("limparCanvas", salaAtual);
-    },
-};

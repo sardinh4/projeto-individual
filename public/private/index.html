@@ -38,16 +38,16 @@
 
             <ul class="menu">
                 <h2>Menu</h2>
-                <li id="home_btn"><i class="fa-solid fa-house"></i> <span>Home</span></li>
-                <li id="play_btn"><i class="fa-solid fa-gamepad"></i> <span>Jogar</span></li>
-                <li id="draw_btn"><i class="fa-solid fa-palette"></i> <span>Desenhar</span></li>
-                <li id="my_galery_btn"><i class="fa-solid fa-address-book"></i> <span>Minha galeria</span></li>
-                <li id="my_progrees_btn"><i class="fa-solid fa-chart-line"></i> <span>Meu progresso</span></li>
+                <li class="menu_nav_btn" id="home_btn"><i class="fa-solid fa-house"></i> <span>Home</span></li>
+                <li class="menu_nav_btn" id="play_btn"><i class="fa-solid fa-gamepad"></i> <span>Jogar</span></li>
+                <li class="menu_nav_btn" id="draw_btn"><i class="fa-solid fa-palette"></i> <span>Desenhar</span></li>
+                <li class="menu_nav_btn" id="my_galery_btn"><i class="fa-solid fa-address-book"></i> <span>Minha galeria</span></li>
+                <li class="menu_nav_btn" id="my_progrees_btn"><i class="fa-solid fa-chart-line"></i> <span>Meu progresso</span></li>
             </ul>
 
             <ul class="menu">
-                <li id="configuration_btn"><i class="fa-solid fa-gear"></i> <span>Configurações</span></li>
-                <li id="out_btn"><i class="fa-solid fa-eraser"></i> <span>Sair</span></li>
+                <li class="menu_nav_btn" id="configuration_btn"><i class="fa-solid fa-gear"></i> <span>Configurações</span></li>
+                <li class="menu_nav_btn" id="out_btn"><i class="fa-solid fa-eraser"></i> <span>Sair</span></li>
             </ul>
         </div>
 
@@ -71,7 +71,7 @@
 
     <!-- MAIN -->
 
-    <main class="main">
+    <main id="main" class="main">
 
         <!-- HOME -->
 
@@ -287,7 +287,8 @@
     <!-- /FOOTER -->
 
 </body>
-
-<script src="./js/script.js" defer></script>
+<script defer src="./js/socket.js"></script>
+<script src="./js/script.js"></script>
+<script src="./js/canvas_config.js"></script>
 
 </html>
