@@ -1,5 +1,9 @@
+var sections = document.querySelectorAll(
+  ".main_section, #transition_section"
+);
+
+
 function showRooms() {
-  // Sua lógica de carregar as salas e atualizar a UI
   const roomsContainer = document.getElementById("rooms");
 
   listRooms()
@@ -12,8 +16,13 @@ function showRooms() {
         // Atualiza o conteúdo com as salas
         roomsContainer.innerHTML = rooms
           .map((room) => `
-            <div class="room" data-idRoon="${room.idRoon}">
-              <span>Sala: ${room.idRoon}</span>
+            <div 
+              onclick="joinRoom(${room.idRoom}); configureScreenExibition(
+                document.querySelectorAll('.main_section, #transition_section'), 
+                'play_section', 0);" 
+              class="room" 
+              data-idRoom="${room.idRoom}">
+              <span>Sala: ${room.idRoom}</span>
               <span>Jogadores: ${room.qtdUsers}</span>
             </div>
           `)
@@ -25,6 +34,7 @@ function showRooms() {
       roomsContainer.innerHTML = "Erro ao carregar as salas.";
     });
 }
+
 
 function listRooms() {
   return fetch("/rooms/listRooms", {

@@ -106,6 +106,12 @@ function createRoom(newRoomId) {
 
 // Função para entrar em uma sala existente
 function joinRoom(existingRoomId) {
+
+  if (!socket || !socket.connected) {
+    console.log("Socket não está conectado. Reconectando...");
+    socket = io(); // Reconectar ao servidor Socket.IO se o socket não estiver conectado
+  }
+  
   socket.emit('join_room', existingRoomId, (response) => {
     if (response.success) {
       roomId = existingRoomId;

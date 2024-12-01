@@ -1,6 +1,7 @@
 show databases;
 
 create database sketchup;
+
 use sketchup;
 
 create table room(
