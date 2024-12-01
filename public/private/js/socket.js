@@ -7,10 +7,9 @@ document.querySelectorAll(".btn_new_roon").forEach((button) => {
   button.addEventListener("click", () => {
     if (!socket || socket.disconnected) {
       socket = io(); // Conectar ao servidor Socket.IO
-
-      // Criar a sala no servidor
-      createRoom();
     }
+    // Criar a sala no servidor
+    createRoom();
   });
 });
 
@@ -71,21 +70,41 @@ function createRoom() {
     if (response.success) {
       roomId = response.roomId;
       console.log(`Sala criada com sucesso: ${roomId}`);
-      connectAndJoinRoom(roomId); // Conectar e entrar na nova sala
+      socket.emit("join_room", roomId, (response) => {
+        if (response.success) {
+          socket.roomId = roomId; // Atribui a sala ao socket
+          console.log(`Entrou na sala ${roomId}`);
+        } else {
+          console.log(response.message);
+        }
+      });
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      emitCanvasData(); // Atualiza os dados do canvas
+
+      // Atualiza o canvas com os dados recebidos
+      socket.on("canvas_update", (dataURL) => {
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+          ctx.drawImage(img, 0, 0); // Desenha a imagem recebida
+        };
+      });
+
+      // Recebe o estado inicial do canvas
+      socket.on("initial_canvas_state", (dataURL) => {
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+          ctx.drawImage(img, 0, 0); // Desenha o estado inicial
+        };
+      });
     } else {
       console.log(response.message);
     }
   });
 }
 
-// Adiciona evento para criar nova sala
-document.querySelectorAll(".btn_new_roon").forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!socket || socket.disconnected) {
-      socket = io(); // Conectar ao servidor Socket.IO
 
-      // Criar a sala no servidor
-      createRoom();
-    }
-  });
-});

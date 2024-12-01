@@ -77,73 +77,74 @@ io.on("connection", (socket) => {
   // Emite as salas disponíveis para o cliente assim que ele se conectar
   socket.emit("availableRooms", Object.keys(activeRooms));
 
-  // Criar uma nova sala
-  socket.on("create_room", async (callback) => {
-    const roomId = gerarIdUnico();
-    console.log(`Criando sala com ID: ${roomId}`);
+  // Função para criar uma nova sala
+ socket.on("create_room", async (callback) => {
+  const roomId = gerarIdUnico();
+  console.log(`Criando sala com ID: ${roomId}`);
 
-    if (activeRooms[roomId]) {
-      console.log(`Sala ${roomId} já existe.`);
-      return callback({ success: false, message: "Sala já existe." });
-    }
+  if (activeRooms[roomId]) {
+    console.log(`Sala ${roomId} já existe.`);
+    return callback({ success: false, message: "Sala já existe." });
+  }
 
-    activeRooms[roomId] = { users: new Set([socket.id]) };
+  // A sala é criada e o estado do canvas é limpo
+  activeRooms[roomId] = { users: new Set([socket.id]) };
+  globalCanvasState[roomId] = ""; // Estado do canvas limpo (não há desenho)
 
-    socket.join(roomId);
-    console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
+  socket.join(roomId);
+  console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
 
-    try {
-      const query = `INSERT INTO room (codRoom) VALUES ('${roomId}')`;
-      await executar(query);
+  try {
+    const query = `INSERT INTO room (codRoom) VALUES ('${roomId}')`;
+    await executar(query);
 
-      // Emitir para todos os clientes na sala (inclusive para o criador)
-      io.to(roomId).emit("room_created", {
-        roomId,
-        users: activeRooms[roomId].users,
-      });
+    // Emitir para todos os clientes na sala (inclusive para o criador)
+    io.to(roomId).emit("room_created", {
+      roomId,
+      users: activeRooms[roomId].users,
+    });
 
-      callback({ success: true, roomId });
-    } catch (erro) {
-      console.log("Erro ao salvar a sala no banco de dados:", erro);
-      callback({
-        success: false,
-        message: "Erro ao salvar a sala no banco de dados.",
-      });
+    callback({ success: true, roomId });
+  } catch (erro) {
+    console.log("Erro ao salvar a sala no banco de dados:", erro);
+    callback({
+      success: false,
+      message: "Erro ao salvar a sala no banco de dados.",
+    });
+  }
+});
+
+
+  // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
+  // Função para gerenciar o envio de dados do canvas
+  socket.on("draw_data", (dataURL) => {
+    const roomId = socket.roomId; // Garantir que estamos trabalhando na sala correta
+    if (roomId) {
+      // Atualiza o estado do canvas para a sala
+      globalCanvasState[roomId] = dataURL;
+      // Emite a atualização para todos os clientes na sala
+      io.to(roomId).emit("canvas_update", dataURL);
     }
   });
 
- // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
-// Função para gerenciar o envio de dados do canvas
-socket.on("draw_data", (dataURL) => {
-  const roomId = socket.roomId;  // Garantir que estamos trabalhando na sala correta
-  if (roomId) {
-    // Atualiza o estado do canvas para a sala
-    globalCanvasState[roomId] = dataURL;
-    // Emite a atualização para todos os clientes na sala
-    io.to(roomId).emit("canvas_update", dataURL);
-  }
-});
+  // Quando um usuário entra na sala, envia o estado atual do canvas
+  socket.on("join_room", (roomId, callback) => {
+    if (!activeRooms[roomId]) {
+      console.log(`Sala ${roomId} não encontrada.`);
+      return callback({ success: false, message: "Sala não encontrada." });
+    }
 
-// Quando um usuário entra na sala, envia o estado atual do canvas
-socket.on("join_room", (roomId, callback) => {
-  if (!activeRooms[roomId]) {
-    console.log(`Sala ${roomId} não encontrada.`);
-    return callback({ success: false, message: "Sala não encontrada." });
-  }
+    socket.join(roomId);
+    socket.roomId = roomId; // Atribui o ID da sala ao socket
+    activeRooms[roomId].users.add(socket.id);
 
-  socket.join(roomId);
-  socket.roomId = roomId;  // Atribui o ID da sala ao socket
-  activeRooms[roomId].users.add(socket.id);
+    // Enviar o estado do canvas para o novo usuário, se houver um estado
+    if (globalCanvasState[roomId]) {
+      socket.emit("initial_canvas_state", globalCanvasState[roomId]);
+    }
 
-  // Enviar o estado do canvas para o novo usuário, se houver um estado
-  if (globalCanvasState[roomId]) {
-    socket.emit("initial_canvas_state", globalCanvasState[roomId]);
-  }
-
-  callback({ success: true, roomId });
-});
-
-
+    callback({ success: true, roomId });
+  });
 
   // Gerenciar desconexão
   socket.on("disconnect", () => {
