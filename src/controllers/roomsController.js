@@ -1,33 +1,14 @@
 var roomsModel = require("../models/roomsModel");
 
-function listrooms(req, res) {
-  roomsModel
-    .listrooms()
-    .then(function (resultado) {
-      console.log(`\nResultados encontrados: ${resultado.length}`);
-      console.log(`Resultados: ${JSON.stringify(resultado)}`); // transforma JSON em String
-
-      if (resultado.length >= 1) {
-        console.log(resultado);
-
-        res.json({
-          rooms: resultado,
-        });
-      } else if (resultado.length == 0) {
-        res.json({
-          rooms: 0,
-        });
-        res.status(403).send("Nenhuma sala ativa!");
-      }
-    })
-    .catch(function (erro) {
-      console.log(erro);
-      console.log(
-        "\nHouve um erro ao tentar o listar as salas! Erro: ",
-        erro.sqlMessage
-      );
-      res.status(500).json(erro.sqlMessage);
-    });
+async function listrooms(req, res) {
+  try {
+    const resultado = await roomsModel.listrooms();
+    console.log(`Resultados encontrados: ${resultado.length}`);
+    res.json({ rooms: resultado });
+  } catch (erro) {
+    console.log(erro);
+    res.status(500).json({ message: "Erro ao listar as salas", error: erro });
+  }
 }
 
 function createRoom(req, res) {

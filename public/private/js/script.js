@@ -15,12 +15,12 @@ function bootButtons() {
   document.getElementById("username").innerText = `${JSON.parse(
     sessionStorage.username
   )}`;
+  
   // HOME
   document.getElementById("home_btn").addEventListener("click", () => {
     configureScreenExibition(sections, "home_section", "30px");
   });
 
-  
   // NEW ROON
   document.querySelectorAll(".btn_new_roon").forEach((button) => {
     button.addEventListener("click", () => {
@@ -29,12 +29,9 @@ function bootButtons() {
   });
 
   // PLAY/LIST ROON
-   document.querySelectorAll("#play_btn, #btn_list_rooms").forEach((button) => {
+  document.querySelectorAll("#play_btn, #btn_list_rooms").forEach((button) => {
     button.addEventListener("click", () => {
       configureScreenExibition(sections, "rooms_section", "30px");
-
-    // Iniciar o setInterval para exibir as salas enquanto 'rooms_section' estiver visível
-    startRoomsInterval();
     });
   });
 
@@ -62,28 +59,20 @@ function bootButtons() {
   document.getElementById("out_btn").addEventListener("click", () => {
     window.location = "../../auth/auth.html";
   });
-
-  
-
- 
-
-  
 }
 
 function configureScreenExibition(sections, idSection, padding) {
   hideAllSections(sections);
   showSection(idSection, padding);
 
-  // Se a seção exibida for 'rooms_section', iniciar o setInterval
-  if (
-    idSection === "rooms_section" &&
-    document.getElementById("rooms_section").style.display === "grid"
-  ) {
+  if (idSection === "rooms_section" && !roomsInterval) {
     showRooms();
-    startRoomsInterval();
-  } else {
-    // Se não for 'rooms_section', garantir que o setInterval seja limpo
-    stopRoomsInterval();
+    roomsInterval = setInterval(() => {
+      showRooms();
+    }, 1000); 
+  } else if (idSection !== "rooms_section" && roomsInterval) {
+    clearInterval(roomsInterval); // Para a atualização se não estiver na seção de salas
+    roomsInterval = null;
   }
 }
 
