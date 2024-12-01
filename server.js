@@ -112,33 +112,38 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
-  socket.on("draw_data", (dataURL) => {
-    if (globalCanvasState[socket.roomId] !== dataURL) {
-      globalCanvasState[socket.roomId] = dataURL; // Atualiza o estado da sala específica
-      io.to(socket.roomId).emit("canvas_update", dataURL); // Emite para todos os clientes na sala
-    }
-  });
+ // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
+// Função para gerenciar o envio de dados do canvas
+socket.on("draw_data", (dataURL) => {
+  const roomId = socket.roomId;  // Garantir que estamos trabalhando na sala correta
+  if (roomId) {
+    // Atualiza o estado do canvas para a sala
+    globalCanvasState[roomId] = dataURL;
+    // Emite a atualização para todos os clientes na sala
+    io.to(roomId).emit("canvas_update", dataURL);
+  }
+});
 
-  // Quando o usuário entra na sala, envia o estado atual do canvas global
-  // Dentro do evento 'join_room'
-  socket.on("join_room", (roomId, callback) => {
-    if (!activeRooms[roomId]) {
-      console.log(`Sala ${roomId} não encontrada.`);
-      return callback({ success: false, message: "Sala não encontrada." });
-    }
+// Quando um usuário entra na sala, envia o estado atual do canvas
+socket.on("join_room", (roomId, callback) => {
+  if (!activeRooms[roomId]) {
+    console.log(`Sala ${roomId} não encontrada.`);
+    return callback({ success: false, message: "Sala não encontrada." });
+  }
 
-    socket.join(roomId);
-    socket.roomId = roomId; // Atribui o ID da sala ao socket
-    activeRooms[roomId].users.add(socket.id);
+  socket.join(roomId);
+  socket.roomId = roomId;  // Atribui o ID da sala ao socket
+  activeRooms[roomId].users.add(socket.id);
 
-    // Enviar o estado do canvas para o novo usuário, se houver um estado
-    if (globalCanvasState[roomId]) {
-      socket.emit("initial_canvas_state", globalCanvasState[roomId]);
-    }
+  // Enviar o estado do canvas para o novo usuário, se houver um estado
+  if (globalCanvasState[roomId]) {
+    socket.emit("initial_canvas_state", globalCanvasState[roomId]);
+  }
 
-    callback({ success: true, roomId });
-  });
+  callback({ success: true, roomId });
+});
+
+
 
   // Gerenciar desconexão
   socket.on("disconnect", () => {

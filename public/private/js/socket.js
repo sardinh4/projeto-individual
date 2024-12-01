@@ -23,35 +23,34 @@ document.querySelectorAll(".menu_nav_btn").forEach((button) => {
   });
 });
 
-
-
-// Conectar e entrar na sala
+// Função para conectar e entrar na sala
 function connectAndJoinRoom(roomId) {
-  socket = io(); // Conectar ao servidor Socket.IO
+  socket = io(); // Conecta ao servidor Socket.IO
 
-  socket.on('connect', () => {
+  socket.on("connect", () => {
     console.log("Conectado ao servidor");
-    socket.emit('join_room', roomId, (response) => {
+
+    socket.emit("join_room", roomId, (response) => {
       if (response.success) {
+        socket.roomId = roomId; // Atribui a sala ao socket
         console.log(`Entrou na sala ${roomId}`);
       } else {
         console.log(response.message);
       }
     });
 
-    // Lidar com atualizações de canvas
-    socket.on('canvas_update', (dataURL) => {
+    // Atualiza o canvas com os dados recebidos
+    socket.on("canvas_update", (dataURL) => {
       const img = new Image();
       img.src = dataURL;
       img.onload = () => {
-        // Quando a imagem for carregada, desenhe no canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
         ctx.drawImage(img, 0, 0); // Desenha a imagem recebida
       };
     });
 
-    // Enviar o estado atual do canvas quando um usuário se conecta (apenas para novos clientes)
-    socket.on('initial_canvas_state', (dataURL) => {
+    // Recebe o estado inicial do canvas
+    socket.on("initial_canvas_state", (dataURL) => {
       const img = new Image();
       img.src = dataURL;
       img.onload = () => {
@@ -61,15 +60,14 @@ function connectAndJoinRoom(roomId) {
     });
   });
 
-  socket.on('disconnect', () => {
-    console.log('Desconectado do servidor!');
+  socket.on("disconnect", () => {
+    console.log("Desconectado do servidor!");
   });
 }
 
-
-// Função para criar uma nova sala
+// Criar a sala
 function createRoom() {
-  socket.emit('create_room', (response) => {
+  socket.emit("create_room", (response) => {
     if (response.success) {
       roomId = response.roomId;
       console.log(`Sala criada com sucesso: ${roomId}`);
@@ -91,5 +89,3 @@ document.querySelectorAll(".btn_new_roon").forEach((button) => {
     }
   });
 });
-
-  
