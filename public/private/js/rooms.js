@@ -58,18 +58,21 @@ function setRoonsButoons(codRoom) {
         0
       );
 
-      // Recebe o estado inicial do canvas (se houver)
-      socket.on("initial_canvas_state", (state) => {
-        currentCanvasState = state;
-        if (currentCanvasState) {
-          restoreCanvas(currentCanvasState);
-        }
-      });
+      // // Recebe o estado inicial do canvas (se houver)
+      // socket.on("initial_canvas_state", (state) => {
+      //   currentCanvasState = state;
+      //   if (currentCanvasState) {
+      //     restoreCanvas(currentCanvasState);
+      //   }
+      // });
     } else {
       console.log(response.message);
     }
   });
 }
+
+
+
 
 
 
