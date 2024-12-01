@@ -10,7 +10,7 @@ function configureScreenExibition(sections, idSection, padding) {
       showRooms();
       roomsInterval = setInterval(() => {
         showRooms();
-      }, 1000); 
+      }, 10000); 
     } else if (idSection !== "rooms_section" && roomsInterval) {
       clearInterval(roomsInterval); // Para a atualização se não estiver na seção de salas
       roomsInterval = null;

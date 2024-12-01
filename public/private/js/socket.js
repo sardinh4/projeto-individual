@@ -10,26 +10,6 @@ document.querySelectorAll(".btn_new_roon").forEach((button) => {
 
       // Criar a sala no servidor
       createRoom();
-
-      // Escutar o evento 'initial_canvas_state' para receber o estado inicial do canvas
-      socket.on("initial_canvas_state", (data) => {
-        const ctx = canvas.getContext("2d");
-        const img = new Image();
-        img.src = data; // A imagem em base64 recebida
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0); // Desenha a imagem recebida no canvas
-        };
-      });
-
-      // Escutar eventos do canvas para atualizações de outros usuários
-      socket.on("draw_data", (data) => {
-        const ctx = canvas.getContext("2d");
-        const img = new Image();
-        img.src = data;
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-        };
-      });
     }
   });
 });
@@ -46,25 +26,14 @@ document.querySelectorAll(".menu_nav_btn").forEach((button) => {
 // Função para criar uma nova sala
 function createRoom() {
   socket.emit("create_room", (response) => { // Callback para receber a resposta
+    
     if (response.success) {
       roomId = response.roomId;
       console.log(`Sala criada com sucesso: ${roomId}`);
       // Entrar na sala criada
-      socket.emit("join_room", roomId, (joinResponse) => {
-        if (joinResponse.success) {
-          console.log(`Entrou na sala ${roomId}`);
-  
-          // Recebe o estado inicial do canvas (se houver)
-          socket.on("initial_canvas_state", (state) => {
-            currentCanvasState = state;
-            if (currentCanvasState) {
-              restoreCanvas(currentCanvasState);
-            }
-          });
-        } else {
-          console.log("Erro ao entrar na sala");
-        }
-      });
+      console.log(roomId)
+      joinRoom(roomId);
+
     } else {
       console.log(response.message);
     }
@@ -78,6 +47,10 @@ function joinRoom(existingRoomId) {
     console.log("Socket não está conectado. Reconectando...");
     socket = io(); // Reconectar ao servidor Socket.IO se o socket não estiver conectado
   }
+
+  socket.on("availableRooms", (rooms) => {
+    console.log("Available rooms:", rooms);
+});
 
   socket.emit("join_room", existingRoomId, (response) => {
     if (response.success) {
