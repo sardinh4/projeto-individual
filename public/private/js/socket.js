@@ -1,15 +1,15 @@
 let socket;
-
 let roomId = null; // ID da sala
-let currentCanvasState = null; // Estado atual do canvas (será atualizado com os dados do servidor)
+let currentCanvasState = null; // Estado atual do canvas
 
-
+// Cria a nova sala
 document.querySelectorAll(".btn_new_roon").forEach((button) => {
   button.addEventListener("click", () => {
     if (!socket || socket.disconnected) {
       socket = io(); // Conectar ao servidor Socket.IO
 
-      createRoom()
+      // Criar a sala no servidor
+      createRoom();
 
       // Escutar o evento 'initial_canvas_state' para receber o estado inicial do canvas
       socket.on("initial_canvas_state", (data) => {
@@ -20,7 +20,6 @@ document.querySelectorAll(".btn_new_roon").forEach((button) => {
           ctx.drawImage(img, 0, 0); // Desenha a imagem recebida no canvas
         };
       });
-
 
       // Escutar eventos do canvas para atualizações de outros usuários
       socket.on("draw_data", (data) => {
@@ -45,79 +44,48 @@ document.querySelectorAll(".menu_nav_btn").forEach((button) => {
 });
 
 // Função para criar uma nova sala
-function createRoom(newRoomId) {
-
-  fetch("/rooms/createRoom", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-
-  })
-    .then(function (resposta) {
-      console.log("resposta: ", resposta);
-
-      if (resposta.ok) {
-        console.log(
-          "Nova sala criada"
-        );
-        resposta.json().then(json => {
-          console.log(json);
-          console.log(JSON.stringify(json));
-          var newRoomId = JSON.stringify(json.idRoom);
-          
-          socket.emit('create_room', newRoomId, (response) => {
-            if (response.success) {
-              roomId = newRoomId;
-              console.log(`Sala criada com sucesso: ${roomId}`);
-              // Recebe o estado do canvas inicial (se houver)
-              if (response.roomId) {
-                socket.emit('join_room', roomId, (joinResponse) => {
-                  if (joinResponse.success) {
-                    console.log(`Entrou na sala ${roomId}`);
-                    // Recebe o estado inicial do canvas (se houver)
-                    socket.on('initial_canvas_state', (state) => {
-                      currentCanvasState = state;
-                      if (currentCanvasState) {
-                        restoreCanvas(currentCanvasState);
-                      }
-                    });
-                  } else {
-                    console.log('Erro ao entrar na sala');
-                  }
-                });
-              }
-            } else {
-              console.log(response.message);
+function createRoom() {
+  socket.emit("create_room", (response) => { // Callback para receber a resposta
+    if (response.success) {
+      roomId = response.roomId;
+      console.log(`Sala criada com sucesso: ${roomId}`);
+      // Entrar na sala criada
+      socket.emit("join_room", roomId, (joinResponse) => {
+        if (joinResponse.success) {
+          console.log(`Entrou na sala ${roomId}`);
+  
+          // Recebe o estado inicial do canvas (se houver)
+          socket.on("initial_canvas_state", (state) => {
+            currentCanvasState = state;
+            if (currentCanvasState) {
+              restoreCanvas(currentCanvasState);
             }
           });
-          
+        } else {
+          console.log("Erro ao entrar na sala");
+        }
       });
-        
-      } else {
-        throw "Houve um erro ao tentar criar uma nova sala!";
-      }
-    })
-    .catch(function (resposta) {
-      console.log(`#ERRO: ${resposta}`);
-    });
+    } else {
+      console.log(response.message);
+    }
+  });
   
 }
 
 // Função para entrar em uma sala existente
 function joinRoom(existingRoomId) {
-
   if (!socket || !socket.connected) {
     console.log("Socket não está conectado. Reconectando...");
     socket = io(); // Reconectar ao servidor Socket.IO se o socket não estiver conectado
   }
-  
-  socket.emit('join_room', existingRoomId, (response) => {
+
+  socket.emit("join_room", existingRoomId, (response) => {
     if (response.success) {
       roomId = existingRoomId;
       console.log(`Entrou na sala ${roomId}`);
+
       // Recebe o estado inicial do canvas (se houver)
-      socket.on('initial_canvas_state', (state) => {
+      socket.on("initial_canvas_state", (state) => {
         currentCanvasState = state;
         if (currentCanvasState) {
           restoreCanvas(currentCanvasState);
@@ -129,4 +97,12 @@ function joinRoom(existingRoomId) {
   });
 }
 
-
+// Função para restaurar o estado do canvas com a imagem recebida
+function restoreCanvas(state) {
+  const ctx = canvas.getContext("2d");
+  const img = new Image();
+  img.src = state; // A imagem em base64 recebida
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0); // Restaura a imagem no canvas
+  };
+}
