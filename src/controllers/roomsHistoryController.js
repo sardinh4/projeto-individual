@@ -1,29 +1,34 @@
 var roomsHistoryModel = require("../models/roomsHistoryModel");
 
 function register(req, res) {
-  // Crie uma variável que vá recuperar os valores do arquivo cadastro.html
-  var roomCod = req.body.roomCodServer;
+  console.log("Entrei no controler" + req.body.userNameServer + req.body.codRoomServer);
+  const username = req.body.userNameServer;
+  const codRoom = req.body.codRoomServer; // Corrigido o nome da variável
 
-  // Faça as validações dos valores
-  if (roomCod == undefined) {
-    res.status(400).send("O roomCod está undefined!");
-  } else {
-    // Passe os valores como parâmetro e vá para o arquivo roomsHistoryModel.js
-    roomsHistoryModel
-      .register(roomCod)
-      .then(function (resultado) {
-        res.json(resultado);
-      })
-      .catch(function (erro) {
-        console.log(erro);
-        console.log(
-          "\nHouve um erro ao realizar o cadastro do usuário na nova sala! Erro: ",
-          erro.sqlMessage
-        );
-        res.status(500).json(erro.sqlMessage);
-      });
+
+  if (!username) {
+    return res.status(400).send("O username está undefined!");
   }
+  if (!codRoom) {
+    return res.status(400).send("O codRoom está undefined!");
+  }
+
+  console.log("passei das validações");
+
+  roomsHistoryModel
+    .register(username, codRoom)
+    .then((resultado) => {
+      res.json({ success: true, resultado });
+    })
+    .catch((erro) => {
+      console.error(
+        "Erro ao realizar o cadastro do usuário na nova sala:",
+        erro.sqlMessage
+      );
+      res.status(500).json({ success: false, erro: erro.sqlMessage });
+    });
 }
+
 
 module.exports = {
   register,

@@ -36,6 +36,7 @@ function connectAndJoinRoom(roomId) {
       } else {
         console.log(response.message);
       }
+      registerRommHistoryBD(roomId);
     });
 
     // Atualiza o canvas com os dados recebidos
@@ -77,6 +78,9 @@ function createRoom() {
         } else {
           console.log(response.message);
         }
+
+
+        registerRommHistoryBD(roomId);
       });
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -107,4 +111,33 @@ function createRoom() {
   });
 }
 
+function registerRommHistoryBD(codRoom) {
+  
 
+  fetch("/history/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userNameServer: sessionStorage.username,
+      codRoomServer: codRoom,
+    }),
+  })
+    .then(function (resposta) {
+      console.log("resposta: ", resposta);
+
+      if (resposta.ok) {
+        console.log("registerRommHistoryBD() realizado com sucesso! .");
+
+        return true;
+      } else {
+        throw "Houve um erro ao tentar realizar o registerRommHistoryBD()!";
+      }
+    })
+    .catch(function (resposta) {
+      console.log(`#ERRO: ${resposta}`);
+    });
+
+  return false;
+}

@@ -1,6 +1,5 @@
 let roomsInterval = null;
 
-
 window.onload = () => {
   hideAllSections(sections);
   document.getElementById("home_section").style.display = "grid";
@@ -9,10 +8,8 @@ window.onload = () => {
 };
 
 function bootButtons() {
-  document.getElementById("username").innerText = `${JSON.parse(
-    sessionStorage.username
-  )}`;
-  
+  document.getElementById("username").innerText = `${sessionStorage.username}`;
+
   // HOME
   document.getElementById("home_btn").addEventListener("click", () => {
     configureScreenExibition(sections, "home_section", "30px");
@@ -57,5 +54,3 @@ function bootButtons() {
     window.location = "../../auth/auth.html";
   });
 }
-
-

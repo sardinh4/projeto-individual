@@ -38,12 +38,12 @@ app.use(cors());
 var indexRouter = require("./src/routes/index");
 var userRouter = require("./src/routes/user");
 var roomsRouter = require("./src/routes/rooms");
-var roomsHistoryRouter = require("./src/routes/roomsHistory");
+var roomsHistoryRouter = require("./src/routes/history");
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/rooms", roomsRouter);
-app.use("/roomsHistory", roomsHistoryRouter);
+app.use("/history", roomsHistoryRouter);
 
 // Banco de dados (Criação de conexão)
 function executar(instrucao) {

@@ -48,7 +48,7 @@ function login() {
                 resposta.json().then(json => {
                     console.log(json);
                     console.log(JSON.stringify(json));
-                    sessionStorage.username = JSON.stringify(json.username);
+                    sessionStorage.username = json.username;
                     
                     setTimeout(function () {
                         window.location = "../../private/index.html";
@@ -75,33 +75,3 @@ function login() {
   }
   
 
-
-
-    const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-// Exemplo de endpoint de login
-sketch.post("/login", async (req, res) => {
-    const { email, senha } = req.body;
-
-    // Valide o usuário no banco de dados (exemplo básico)
-    const usuario = await buscarUsuarioNoBanco(email);
-    if (!usuario) {
-        return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
-    }
-
-    // Verifique a senha
-    const senhaValida = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaValida) {
-        return res.status(401).json({ mensagem: 'Credenciais inválidas.' });
-    }
-
-    // Gere o token
-    const token = jwt.sign(
-        { id: usuario.id, email: usuario.email }, // Payload
-        process.env.JWT_SECRET,                  // Chave secreta
-        { expiresIn: "2h" }                      // Tempo de expiração
-    );
-
-    res.json({ token });
-});
