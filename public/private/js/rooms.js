@@ -45,6 +45,8 @@ function setRoonsButoons(codRoom) {
     console.log("Available rooms:", rooms);
   });
 
+  connectAndJoinRoom(codRoom)
+
   socket.emit("join_room", codRoom, (response) => {
     if (response.success) {
       roomId = codRoom;

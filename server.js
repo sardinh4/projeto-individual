@@ -19,12 +19,11 @@ const HOST = process.env.HOST || "localhost";
 
 // Configuração do MySQL
 var mySqlConfig = {
-  // Configurações da conexão com o banco de dados
-  host: "localhost", // Endereço do servidor de banco de dados (definido em uma variável de ambiente).
-  database: "sketchup", // Nome do banco de dados.
-  user: "root", // Nome de usuário para acessar o banco.
-  password: "L04s28S03", // Senha do usuário.
-  port: "3306", // Porta do servidor MySQL.
+  host: "localhost",
+  database: "sketchup",
+  user: "root",
+  password: "L04s28S03",
+  port: "3306",
 };
 
 // Middleware
@@ -63,11 +62,11 @@ function executar(instrucao) {
 }
 
 let activeRooms = {}; // Armazena os IDs das salas ativas
-let roomsCanvasState = {}; // Armazena o estado do canvas para cada sala
+let globalCanvasState = {}; // Armazena o estado do canvas por sala
 
 // Função para gerar um ID de 8 caracteres
 function gerarIdUnico() {
-  const id = uuidv4(); // Gera o UUID padrão
+  const id = uuidv4();
   return id.split("-")[0].slice(0, 8); // Extrai a primeira parte do UUID e pega os 8 primeiros caracteres
 }
 
@@ -80,29 +79,29 @@ io.on("connection", (socket) => {
 
   // Criar uma nova sala
   socket.on("create_room", async (callback) => {
-    // Gerar um ID único para a sala de 8 caracteres
     const roomId = gerarIdUnico();
     console.log(`Criando sala com ID: ${roomId}`);
 
-    // Verificar se a sala já existe
     if (activeRooms[roomId]) {
       console.log(`Sala ${roomId} já existe.`);
       return callback({ success: false, message: "Sala já existe." });
     }
 
-    // Criar a sala no Socket.IO
     activeRooms[roomId] = { users: new Set([socket.id]) };
 
-    // Entrar na sala
     socket.join(roomId);
     console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
 
-    // Salvar a sala no banco de dados
     try {
       const query = `INSERT INTO room (codRoom) VALUES ('${roomId}')`;
-      await executar(query); // Executa a query de inserção no banco de dados
+      await executar(query);
 
-      // Retorna sucesso
+      // Emitir para todos os clientes na sala (inclusive para o criador)
+      io.to(roomId).emit("room_created", {
+        roomId,
+        users: activeRooms[roomId].users,
+      });
+
       callback({ success: true, roomId });
     } catch (erro) {
       console.log("Erro ao salvar a sala no banco de dados:", erro);
@@ -113,64 +112,28 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Entrar em uma sala existente
+  // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
+  socket.on("draw_data", (dataURL) => {
+    if (globalCanvasState[socket.roomId] !== dataURL) {
+      globalCanvasState[socket.roomId] = dataURL; // Atualiza o estado da sala específica
+      io.to(socket.roomId).emit("canvas_update", dataURL); // Emite para todos os clientes na sala
+    }
+  });
+
+  // Quando o usuário entra na sala, envia o estado atual do canvas global
   socket.on("join_room", (roomId, callback) => {
     if (!activeRooms[roomId]) {
       console.log(`Sala ${roomId} não encontrada.`);
       return callback({ success: false, message: "Sala não encontrada." });
     }
 
-    // Entrar na sala
     socket.join(roomId);
-    activeRooms[roomId].users.add(socket.id); // Adicionar o usuário à sala
+    socket.roomId = roomId; // Atribui o ID da sala ao socket
+    activeRooms[roomId].users.add(socket.id);
 
-    console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
-
-    // Envia o estado atual do canvas daquela sala (se houver)
-    if (roomsCanvasState[roomId]) {
-      console.log("Estado do canvas encontrado:", roomsCanvasState[roomId]);
-      socket.emit("initial_canvas_state", roomsCanvasState[roomId]);
-    }
-
-    callback({ success: true, roomId });
-  });
-
-  // Reenvia dados do canvas para todos os clientes na sala, exceto para o remetente
-  socket.on("draw_data", (roomId, data) => {
-    if (!activeRooms[roomId]) {
-      console.log(
-        `Tentativa de atualizar canvas de uma sala inexistente: ${roomId}`
-      );
-      return;
-    }
-
-    console.log(`Atualizando canvas para a sala ${roomId}`);
-    roomsCanvasState[roomId] = data; // Atualiza o estado do canvas da sala
-
-    // Envia os dados atualizados para todos os outros clientes na sala
-    socket.to(roomId).emit("draw_data", data);
-  });
-
-  // Quando o usuário entra em uma sala, envia o estado inicial do canvas
-  socket.on("join_room", (roomId, callback) => {
-    if (!activeRooms[roomId]) {
-      console.log(`Sala ${roomId} não encontrada.`);
-      return callback({ success: false, message: "Sala não encontrada." });
-    }
-
-    // Entrar na sala
-    socket.join(roomId);
-    activeRooms[roomId].users.add(socket.id); // Adicionar o usuário à sala
-
-    console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
-
-    // Envia o estado atual do canvas daquela sala (se houver)
-    if (roomsCanvasState[roomId]) {
-      console.log(
-        "Enviando estado inicial do canvas:",
-        roomsCanvasState[roomId]
-      );
-      socket.emit("initial_canvas_state", roomsCanvasState[roomId]);
+    // Enviar o estado do canvas para o novo usuário, se houver um estado
+    if (globalCanvasState[roomId]) {
+      socket.emit("initial_canvas_state", globalCanvasState[roomId]);
     }
 
     callback({ success: true, roomId });
@@ -180,14 +143,19 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`Cliente desconectado: ${socket.id}`);
 
-    // Remover o cliente da(s) sala(s) em que ele estava
     Object.keys(activeRooms).forEach((roomId) => {
       const room = activeRooms[roomId];
       if (room.users.has(socket.id)) {
-        room.users.delete(socket.id); // Remove o cliente da sala
+        room.users.delete(socket.id);
         if (room.users.size === 0) {
           console.log(`Sala ${roomId} está vazia, mas permanece ativa.`);
         }
+
+        // Notificar todos os usuários restantes na sala sobre a desconexão
+        io.to(roomId).emit("user_left", {
+          userId: socket.id,
+          users: room.users,
+        });
       }
     });
   });

@@ -29,12 +29,14 @@ canvas.addEventListener("mousedown", ({ clientX, clientY }) => {
     isPainting = true;
     if (activeTool === "brush") draw(clientX, clientY);
     if (activeTool === "rubber") erase(clientX, clientY);
+    emitCanvasData()
 });
 
 canvas.addEventListener("mousemove", ({ clientX, clientY }) => {
     if (!isPainting) return;
     if (activeTool === "brush") draw(clientX, clientY);
     if (activeTool === "rubber") erase(clientX, clientY);
+    emitCanvasData()
 });
 
 canvas.addEventListener("mouseup", () => {
@@ -102,3 +104,4 @@ const emitCanvasData = () => {
 // Adiciona eventos aos botões
 tools.forEach((tool) => tool.addEventListener("click", selectTool));
 sizeButtons.forEach((button) => button.addEventListener("click", selectSize));
+
