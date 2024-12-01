@@ -121,6 +121,7 @@ io.on("connection", (socket) => {
   });
 
   // Quando o usuário entra na sala, envia o estado atual do canvas global
+  // Dentro do evento 'join_room'
   socket.on("join_room", (roomId, callback) => {
     if (!activeRooms[roomId]) {
       console.log(`Sala ${roomId} não encontrada.`);
