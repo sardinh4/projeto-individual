@@ -35,8 +35,8 @@ function connectAndJoinRoom(roomId) {
         console.log(`Entrou na sala ${roomId}`);
       } else {
         console.log(response.message);
+        
       }
-      registerRommHistoryBD(roomId);
     });
 
     // Atualiza o canvas com os dados recebidos
@@ -79,8 +79,6 @@ function createRoom() {
           console.log(response.message);
         }
 
-
-        registerRommHistoryBD(roomId);
       });
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
