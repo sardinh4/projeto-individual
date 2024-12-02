@@ -6,15 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sketch Up</title>
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/draw.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" />
     <script src="https://kit.fontawesome.com/041dbc8823.js" crossorigin="anonymous"></script>
     <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
     <link rel="shortcut icon" type="imagex/png" href="../../config/assets/logo/logo.svg">
 </head>
 
-<body>
+<body onload="exibirHistoricoDash()">
 
     <!-- NAV-BAR -->
 
@@ -28,11 +32,14 @@
             <i class="fa-solid fa-bars"></i>
         </header>
         <div class="user_icon_container">
-            
+
             <img class="user_icon" src="../../config/assets/user-icon/user-icon.png" alt="">
             <span class="user_name" id="username"></span>
 
         </div>
+
+
+
 
         <div class="menu_container">
 
@@ -41,12 +48,16 @@
                 <li class="menu_nav_btn" id="home_btn"><i class="fa-solid fa-house"></i> <span>Home</span></li>
                 <li class="menu_nav_btn" id="play_btn"><i class="fa-solid fa-gamepad"></i> <span>Jogar</span></li>
                 <li class="menu_nav_btn" id="draw_btn"><i class="fa-solid fa-palette"></i> <span>Desenhar</span></li>
-                <li class="menu_nav_btn" id="my_galery_btn"><i class="fa-solid fa-address-book"></i> <span>Minha galeria</span></li>
-                <li class="menu_nav_btn" id="my_progrees_btn"><i class="fa-solid fa-chart-line"></i> <span>Meu progresso</span></li>
+                <li class="menu_nav_btn" id="my_galery_btn"><i class="fa-solid fa-address-book"></i> <span>Minha
+                        galeria</span></li>
+                <li class="menu_nav_btn" id="my_progrees_btn"><i class="fa-solid fa-chart-line"></i> <span>Meu
+                        progresso</span></li>
             </ul>
 
             <ul class="menu">
-                <li class="menu_nav_btn" id="configuration_btn"><i class="fa-solid fa-gear"></i> <span>Configurações</span></li>
+                <li class="menu_nav_btn" id="configuration_btn"><i class="fa-solid fa-gear"></i>
+                    <span>Configurações</span>
+                </li>
                 <li class="menu_nav_btn" id="out_btn"><i class="fa-solid fa-eraser"></i> <span>Sair</span></li>
             </ul>
         </div>
@@ -57,186 +68,39 @@
 
     <!-- /NAV-BAR -->
 
-    <section id="transition_section">
-        <div id="transition_section_contant">
-            <img class="logo" src="../../config/assets/logo/logo.svg" alt="">
-            <h1>Sketch Up</h1>
-        </div>
-
-        <img id="soot_bg_1" src="../../config/assets/bg/soot_bg_1.svg" alt="">
-        <img id="soot_bg_2" src="../../config/assets/bg/soot_bg_2.svg" alt="">
-        <div id="circle1"></div>
-        <div id="circle2"></div>
-    </section>
 
     <!-- MAIN -->
 
-    <main id="main" class="main">
-
-        <!-- PLAY -->
-
-        <section class="main_section" id="play_section">
-            <section class="left">
+    <main id="main_my_progress" class="main">
 
 
-                <section class="draw">
-                    <canvas id="canvas">
-
-                    </canvas>
-                </section>
-
-
-                <section class="tools">
-                    <section class="tool_box">
-                        <button class="button_tool active" data-action="brush">
-                            <span class="material-symbols-outlined">brush</span>
-                        </button>
-
-                        <button class="button_tool" data-action="rubber">
-                            <span class="material-symbols-outlined">ink_eraser</span>
-                        </button>
-
-                        <button class="button_tool">
-                            <input type="color" class="input_color">
-                        </button>
-                    </section>
-
-                    <section class="tool_box">
-                        <button class="button_size  active" id="stroke_5" value="5">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_10" value="10">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_15" value="15">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_20" value="20">
-                            <span class="stroke"></span>
-                        </button>
-                    </section>
-
-                    <section class="tool_box">
-                        <button class="button_tool button_clear">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </section>
-
-                </section>
-
-            </section>
-
-            <section class="right">
-
-                <section class="answer">
-                    <h2>Resposta</h2>
-                    <div class="answers"></div>
-                    <label for="input_answer">Resposta:</label>
-                    <input id="input_answer" type="text">
-                    <button type="submit">Enviar</button>
-
-                </section>
-                <section class="ranking">
-                    <h2>Ranking</h2>
-                    <div class="players"></div>
-
-                </section>
-
-            </section>
-        </section>
-
-        <!-- /PLAY -->
-
-
-        <!-- DRAW -->
-
-        <section class="main_section" id="draw_section">
-
-            <section class="top">
-                <section class="draw">
-                    <canvas id="canvas2">
-
-                    </canvas>
-                </section>
-
-                <section class="tools">
-
-                    <section class="tool_box">
-                        <button class="button_tool active" data-action="brush">
-                            <span class="material-symbols-outlined">brush</span>
-                        </button>
-
-                        <button class="button_tool" data-action="rubber">
-                            <span class="material-symbols-outlined">ink_eraser</span>
-                        </button>
-
-                        <button class="button_tool">
-                            <input type="color" class="input_color">
-                        </button>
-                    </section>
-
-                    <section class="tool_box">
-                        <button class="button_size  active" id="stroke2_5" value="5">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_10" value="10">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_15" value="15">
-                            <span class="stroke"></span>
-                        </button>
-
-                        <button class="button_size" id="stroke_20" value="20">
-                            <span class="stroke"></span>
-                        </button>
-                    </section>
-
-                    <section class="tool_box">
-                        <button class="button_tool button_clear">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </section>
-
-                </section>
-            </section>
-
-            <section class="bottom">
-
-                <button class="btn_delete">Excluir</button>
-                <button class="btn_save">Salvar</button>
-            </section>
-
-        </section>
-
-        <!-- /DRAW -->
-
-        <!-- MY GALERY -->
-
-        <section class="main_section" id="my_galery_section">
-
-        </section>
-
-        <!-- /MY GALERY -->
 
         <!-- MY PROGRESS -->
 
         <section class="main_section" id="my_progress_section">
+            <div>
+                <h3>Maior pontução numa Partida:</h3>
+                <span id="kpi1"></span>
+            </div>
+            <div>
+                <h3>Pontução da semana:</h3>
+                <span id="kpi2"></span>
+            </div>
+            <div>
+                <h3>Pontução total:</h3>
+                <span id="kpi3"></span>
+            </div>
 
+        </section>
+
+        <section id="chart_container">
+            <h2>Pontuação Total por Sala</h2>
+        <canvas width="100%" height="40%" ; id="myChart"></canvas>
         </section>
         <!-- /MY PROGRESS -->
+        
 
-        <!-- CONFIGURATION -->
 
-        <section class="main_section" id="configuration_section">
-
-        </section>
-
-        <!-- /CONFIGURATION -->
 
     </main>
 
@@ -277,11 +141,113 @@
     <!-- /FOOTER -->
 
 </body>
-<script src="./js/tools.js"></script>
-<script defer src="./js/socket.js"></script>
-<script src="./js/canvas_config.js"></script>
-<script src="./js/canvas2.config.js"></script>
-<script src="./js/rooms.js"></script>
-<script src="./js/sketch_up_game_config.js"></script>
-<script src="./js/script.js"></script>
+
+<script>
+
+    function exibirHistoricoDash() {
+        document.getElementById("username").innerText = `${sessionStorage.username}`;
+
+        fetch("/dash/showHistory", {
+            method: "POST", // Mudamos para POST
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userNameServer: sessionStorage.username, // Envia o username no corpo da requisição
+            }),
+        })
+            .then(function (resposta) {
+                console.log("resposta: ", resposta);
+
+                if (resposta.ok) {
+                    console.log("Consulta realizada com sucesso!");
+                    return resposta.json(); // Retorna os dados como JSON
+                } else {
+                    throw "Houve um erro ao tentar realizar a consulta!";
+                }
+            })
+            .then(function (dados) {
+                console.log("Dados recebidos: ", dados);
+
+                // Aqui você manipula os dados e insere nas KPIs
+                if (dados.success) {
+                    // Supondo que a resposta seja um objeto que contém as informações das KPIs
+                    document.getElementById("kpi1").innerText = `${dados.resultado.highestPoints[0].highestPoints}`;
+                    document.getElementById("kpi2").innerText = `${dados.resultado.totalPointsByRoomTop[0].totalPoints}`;
+                    document.getElementById("kpi3").innerText = `${dados.resultado.totalPointsLastWeek[0].totalPointsLastWeek}`;
+
+                    // Atualiza o gráfico com os dados de totalPointsByRoom
+                    const rooms = dados.resultado.totalPointsByRoom; // Aqui vamos pegar o array de totalPointsByRoom
+                    const roomNames = rooms.map(room => room.roomCode); // Extrai os códigos das salas
+                    const roomPoints = rooms.map(room => room.totalPoints); // Extrai os pontos totais por sala
+
+                    // Atualizando o gráfico
+                    myChart.data.labels = roomNames; // Labels serão os códigos das salas
+                    myChart.data.datasets[0].data = roomPoints; // Dados serão os pontos totais por sala
+                    myChart.update(); // Atualiza o gráfico
+                } else {
+                    console.log("Erro nos dados recebidos");
+                }
+            })
+            .catch(function (erro) {
+                console.log(`#ERRO: ${erro}`);
+            });
+    }
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line', // Tipo de gráfico
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            datasets: [{
+                label: 'Pontuação Total por Partida',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: 'rgba(75, 192, 192, 1)',  // Cor da linha
+                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Cor de fundo
+                borderWidth: 3,  // Aumenta a espessura da linha
+                pointRadius: 5, // Aumenta o tamanho dos pontos
+                pointBackgroundColor: 'rgba(75, 192, 192, 1)' // Cor dos pontos
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 16,  // Aumenta o tamanho da fonte dos rótulos no eixo X
+                            weight: 'bold'  // Deixa os rótulos em negrito
+                        }
+                    }
+                },
+                y: {
+                    ticks: {
+                        font: {
+                            size: 16,  // Aumenta o tamanho da fonte dos rótulos no eixo Y
+                            weight: 'bold'  // Deixa os rótulos em negrito
+                        },
+                        beginAtZero: true
+                    }
+                }
+            },
+            elements: {
+                line: {
+                    borderWidth: 4,  // Deixa a linha do gráfico mais grossa
+                },
+                point: {
+                    radius: 6,  // Aumenta o tamanho dos pontos no gráfico
+                }
+            }
+        }
+    });
+
+    // Redimensiona o gráfico sempre que a janela for redimensionada
+    window.addEventListener('resize', function () {
+        myChart.resize();
+    });
+
+</script>
+
+
+
 </html>

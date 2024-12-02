@@ -34,25 +34,25 @@ function bootButtons() {
     });
   });
 
-  // DRAW
-  document.getElementById("draw_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "draw_section", "30px");
-  });
+  // // DRAW
+  // document.getElementById("draw_btn").addEventListener("click", () => {
+  //   configureScreenExibition(sections, "draw_section", "30px");
+  // });
 
-  // MY GALERY
-  document.getElementById("my_galery_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "my_galery_section", 0);
-  });
+  // // MY GALERY
+  // document.getElementById("my_galery_btn").addEventListener("click", () => {
+  //   configureScreenExibition(sections, "my_galery_section", 0);
+  // });
 
-  // MY PROGREES
-  document.getElementById("my_progrees_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "my_progress_section", 0);
-  });
+  // // MY PROGREES
+  // document.getElementById("my_progrees_btn").addEventListener("click", () => {
+  //   mudarTela();
+  // });
 
-  // CONFIGURATION
-  document.getElementById("configuration_btn").addEventListener("click", () => {
-    configureScreenExibition(sections, "configuration_section", 0);
-  });
+  // // CONFIGURATION
+  // document.getElementById("configuration_btn").addEventListener("click", () => {
+  //   configureScreenExibition(sections, "configuration_section", 0);
+  // });
 
   // OUT
   document.getElementById("out_btn").addEventListener("click", () => {
@@ -236,6 +236,9 @@ function connectAndJoinRoom(roomId) {
     }
   });
 
+  // Remover eventos anteriores para evitar múltiplas execuções
+  socket.off("new_drawing_user");
+
   // Escutando o evento de mudança de desenhador
   socket.on("new_drawing_user", (data) => {
     var { userId, userTopic } = data;
@@ -293,13 +296,16 @@ function createRoom() {
         };
       });
 
-      socket.on("not_drawing_permission", (data) => {
+      socket.once("not_drawing_permission", (data) => {
         if (data.canDraw === false) {
           canvas.removeEventListener("mousedown", handleMouseDown);
         } else {
           canvas.addEventListener("mousedown", handleMouseDown);
         }
       });
+
+      // Remover eventos anteriores para evitar múltiplas execuções
+    socket.off("new_drawing_user");
 
       // Escutando o evento de mudança de desenhador
       socket.on("new_drawing_user", (data) => {
@@ -345,8 +351,10 @@ document.getElementById("btn_chute").addEventListener("click", () => {
       // Verifica se o chute está correto
       if (input_answer.value === chute) {
         alert("Acertou!");
+        registerchute(codSala, 100)
       } else {
         alert("Errou!");
+        registerchute(codSala, -10)
       }
     } else {
       console.log("Erro ao obter tema:", response.message);
@@ -354,7 +362,7 @@ document.getElementById("btn_chute").addEventListener("click", () => {
   });
 });
 
-function registerRommHistoryBD(codRoom) {
+function registerchute(codRoom, points) {
   fetch("/history/register", {
     method: "POST",
     headers: {
@@ -363,6 +371,7 @@ function registerRommHistoryBD(codRoom) {
     body: JSON.stringify({
       userNameServer: sessionStorage.username,
       codRoomServer: codRoom,
+      pointsServer: points,
     }),
   })
     .then(function (resposta) {
@@ -490,3 +499,4 @@ const emitCanvasData = () => {
 // Adiciona eventos aos botões
 tools.forEach((tool) => tool.addEventListener("click", selectTool));
 sizeButtons.forEach((button) => button.addEventListener("click", selectSize));
+

@@ -1,0 +1,50 @@
+#main_my_progress {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  justify-content: space-between;
+}
+
+h2{
+  color: #00507d;
+  text-align: center;
+  font-size: 3rem;
+}
+
+#my_progress_section {
+  display: flex;
+  justify-content: space-between;
+  border: solid 2px #00507d;
+ border-radius: 10px;
+ padding: 10px;
+}
+
+#my_progress_section div {
+  background-color: #00507d;
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  border-radius: 10px;
+}
+
+#my_progress_section div span {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+#myChart {
+  width: 100px;
+  height: 100px;
+}
+
+
+#chart_container{
+ padding: 10px;
+ border: solid 2px #00507d;
+ border-radius: 10px;
+}

@@ -91,11 +91,13 @@ var indexRouter = require("./src/routes/index");
 var userRouter = require("./src/routes/user");
 var roomsRouter = require("./src/routes/rooms");
 var roomsHistoryRouter = require("./src/routes/history");
+var dashRoutes = require("./src/routes/dash");
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/rooms", roomsRouter);
 app.use("/history", roomsHistoryRouter);
+app.use("/dash", dashRoutes);
 
 let activeRooms = {}; // Armazena os IDs das salas ativas
 let globalCanvasState = {}; // Armazena o estado do canvas por sala
@@ -233,12 +235,11 @@ io.on("connection", (socket) => {
       const userTopic = getRandomTopic();
       room.userTopics[room.currentDrawer] = userTopic;
   
+      // Notifica todos os usuários na sala sobre o novo desenhador
       io.to(roomId).emit("new_drawing_user", {
         userId: room.currentDrawer,
         userTopic,
       });
-  
-
     }
   }
 
@@ -273,18 +274,19 @@ io.on("connection", (socket) => {
       console.log(`Sala ${roomId} não encontrada.`);
       return callback({ success: false, message: "Sala não encontrada." });
     }
-
+  
     socket.join(roomId);
     socket.roomId = roomId; // Atribui o ID da sala ao socket
     activeRooms[roomId].users.add(socket.id);
-
-    // Iniciar a troca de desenhador a cada 30 segundos
+  
+    // Iniciar a troca de desenhador a cada 30 segundos, apenas se ainda não estiver ativa
     if (!drawingUserInterval[roomId]) {
       drawingUserInterval[roomId] = setInterval(() => {
         switchDrawingUser(roomId);
-      }, 30000); // Troca a cada 120 segundos
+      }, 120000); // Troca a cada 30 segundos
+      console.log(`Intervalo de troca de desenhador iniciado para a sala ${roomId}`);
     }
-
+  
     callback({ success: true, roomId });
   });
 
