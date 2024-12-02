@@ -214,24 +214,30 @@ io.on("connection", (socket) => {
   // Função para alternar o desenhador a cada 30 segundos
   let drawingUserInterval = {}; // Armazena os intervalos de troca de desenhador por sala
 
-  function switchDrawingUser(roomId) {
-    const room = activeRooms[roomId];
-    if (room && room.users.size > 0) {
-      const usersArray = Array.from(room.users); // Converte o set de usuários em array
-      const currentUserIndex = usersArray.indexOf(room.currentDrawer);
+  // Função para atribuir um tema aleatório ao novo desenhador
+function switchDrawingUser(roomId) {
+  const room = activeRooms[roomId];
+  if (room && room.users.size > 0) {
+    const usersArray = Array.from(room.users); // Converte o set de usuários em array
+    const currentUserIndex = usersArray.indexOf(room.currentDrawer);
 
-      // Atualiza o desenhador para o próximo usuário
-      const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
-      room.currentDrawer = usersArray[nextUserIndex];
+    // Atualiza o desenhador para o próximo usuário
+    const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
+    room.currentDrawer = usersArray[nextUserIndex];
 
-      // Emite para todos na sala quem é o novo desenhador
-      io.to(roomId).emit("new_drawing_user", {
-        userId: room.currentDrawer,
-      });
+    // Gera um tema aleatório para o novo desenhador
+    const userTopic = getRandomTopic();
+    room.userTopics[room.currentDrawer] = userTopic;
 
-      console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer}`);
-    }
+    // Emite para todos na sala quem é o novo desenhador
+    io.to(roomId).emit("new_drawing_user", {
+      userId: room.currentDrawer,
+      userTopic: userTopic, // Envia o tema do novo desenhador
+    });
+
+    console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer} com tema ${userTopic}`);
   }
+}
 
   // Definir intervalo para troca de desenhador a cada 30 segundos
   socket.on("join_room", (roomId, callback) => {

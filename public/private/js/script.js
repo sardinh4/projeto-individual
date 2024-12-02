@@ -224,20 +224,35 @@ function connectAndJoinRoom(roomId) {
 
   socket.on("not_drawing_permission", (data) => {
     if (data.canDraw === false) {
-      canvas.removeEventListener("mousedown", handleMouseDown)
-    
-    }else{
-      canvas.addEventListener("mousedown", handleMouseDown)
+      canvas.removeEventListener("mousedown", handleMouseDown);
+    } else {
+      canvas.addEventListener("mousedown", handleMouseDown);
+    }
+  });
+
+  socket.on("not_drawing_permission", (data) => {
+    if (data.canDraw === false) {
+      canvas.removeEventListener("mousedown", handleMouseDown);
+    } else {
+      canvas.addEventListener("mousedown", handleMouseDown);
     }
   });
 
   // Escutando o evento de mudança de desenhador
   socket.on("new_drawing_user", (data) => {
-    console.log(`Agora, o desenhador é o usuário com ID: ${data.userId}`);
+    const { userId, userTopic } = data;
+    console.log(`Agora, o desenhador é o usuário com ID: ${userId}`);
+    sessionStorage.setItem("chute", data.userTopic); // Armazena no sessionStorage
+
+    socket.on("not_drawing_permission", (data) => {
+      if (data.canDraw === true) {
+        alert(`Tema: ${userTopic}`);
+      }
+    });
   });
 
-  socket.on('assigned_topic', (topic) => {
-    console.log('Seu tema para desenhar é:', topic);
+  socket.on("assigned_topic", (topic) => {
+    console.log("Seu tema para desenhar é:", topic);
     // Exibir o tema na interface do usuário
     alert(`Tema: ${topic}`);
   });
@@ -287,19 +302,27 @@ function createRoom() {
 
       socket.on("not_drawing_permission", (data) => {
         if (data.canDraw === false) {
-          canvas.removeEventListener("mousedown", handleMouseDown)
-        }else{
-          canvas.addEventListener("mousedown", handleMouseDown)
+          canvas.removeEventListener("mousedown", handleMouseDown);
+        } else {
+          canvas.addEventListener("mousedown", handleMouseDown);
         }
       });
 
       // Escutando o evento de mudança de desenhador
       socket.on("new_drawing_user", (data) => {
-        console.log(`Agora, o desenhador é o usuário com ID: ${data.userId}`);
+        const { userId, userTopic } = data;
+        console.log(`Agora, o desenhador é o usuário com ID: ${userId}`);
+        sessionStorage.setItem("chute", data.userTopic); // Armazena no sessionStorage
+
+        socket.on("not_drawing_permission", (data) => {
+          if (data.canDraw === true) {
+            alert(`Tema: ${userTopic}`);
+          }
+        });
       });
 
-      socket.on('assigned_topic', (topic) => {
-        console.log('Seu tema para desenhar é:', topic);
+      socket.on("assigned_topic", (topic) => {
+        console.log("Seu tema para desenhar é:", topic);
         // Exibir o tema na interface do usuário
         alert(`Tema: ${topic}`);
       });
@@ -312,6 +335,17 @@ function createRoom() {
     }
   });
 }
+
+document.getElementById("btn_chute").addEventListener("click", () => {
+  const input_answer = document.getElementById("input_answer"); // Certifique-se de ter o campo de input com este id
+
+  // Verifica se o chute está correto
+  if (input_answer.value === sessionStorage.chute) {
+    alert("Acertou!");
+  } else {
+    alert("Errou!");
+  }
+});
 
 function registerRommHistoryBD(codRoom) {
   fetch("/history/register", {
@@ -370,9 +404,7 @@ inputColor.addEventListener("change", ({ target }) => {
 
 // Eventos para pintar e apagar
 
-
 canvas.addEventListener("mousedown", handleMouseDown);
-
 
 function handleMouseDown(event) {
   const { clientX, clientY } = event;
@@ -380,7 +412,6 @@ function handleMouseDown(event) {
   if (activeTool === "brush") draw(clientX, clientY);
   if (activeTool === "rubber") erase(clientX, clientY);
 }
-
 
 canvas.addEventListener("mousemove", ({ clientX, clientY }) => {
   if (!isPainting) return;
