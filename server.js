@@ -118,7 +118,11 @@ io.on("connection", (socket) => {
     }
 
     // A sala é criada e o estado do canvas é limpo
-    activeRooms[roomId] = { users: new Set([socket.id]), currentDrawer: socket.id, userTopics: {} };
+    activeRooms[roomId] = {
+      users: new Set([socket.id]),
+      currentDrawer: socket.id,
+      userTopics: {},
+    };
     globalCanvasState[roomId] = ""; // Estado do canvas limpo (não há desenho)
 
     socket.join(roomId);
@@ -150,13 +154,13 @@ io.on("connection", (socket) => {
     const roomId = socket.roomId; // Garantir que estamos trabalhando na sala correta
     if (roomId) {
       const room = activeRooms[roomId];
-  
+
       // Verifica se o usuário tentando desenhar é o desenhador atual
       if (socket.id === room.currentDrawer) {
         console.log(`Usuário ${socket.id} tentou desenhar é o desenhador.`);
         socket.emit("not_drawing_permission", {
           message: "Você é o desenhador atual.",
-          canDraw: true,  // Indica que o usuário não pode desenhar
+          canDraw: true, // Indica que o usuário não pode desenhar
         });
         // Atualiza o estado do canvas para a sala
         globalCanvasState[roomId] = dataURL;
@@ -164,10 +168,12 @@ io.on("connection", (socket) => {
         io.to(roomId).emit("canvas_update", dataURL);
       } else {
         // Caso o usuário não seja o desenhador, não permite o desenho
-        console.log(`Usuário ${socket.id} tentou desenhar, mas não é o desenhador.`);
+        console.log(
+          `Usuário ${socket.id} tentou desenhar, mas não é o desenhador.`
+        );
         socket.emit("not_drawing_permission", {
           message: "Você não é o desenhador atual.",
-          canDraw: false,  // Indica que o usuário não pode desenhar
+          canDraw: false, // Indica que o usuário não pode desenhar
         });
       }
     }
@@ -187,9 +193,9 @@ io.on("connection", (socket) => {
     // Atribui um tema aleatório ao usuário
     const userTopic = getRandomTopic();
     activeRooms[roomId].userTopics[socket.id] = userTopic;
-    
+
     // Envia o tema para o cliente
-    socket.emit("assigned_topic", userTopic);
+    socket.emit("assigned_topic", userTopic, socket.id);
 
     // Enviar o estado do canvas para o novo usuário, se houver um estado
     if (globalCanvasState[roomId]) {
@@ -215,29 +221,51 @@ io.on("connection", (socket) => {
   let drawingUserInterval = {}; // Armazena os intervalos de troca de desenhador por sala
 
   // Função para atribuir um tema aleatório ao novo desenhador
-function switchDrawingUser(roomId) {
-  const room = activeRooms[roomId];
-  if (room && room.users.size > 0) {
-    const usersArray = Array.from(room.users); // Converte o set de usuários em array
-    const currentUserIndex = usersArray.indexOf(room.currentDrawer);
+  function switchDrawingUser(roomId) {
+    const room = activeRooms[roomId];
+    if (room && room.users.size > 0) {
+      const usersArray = Array.from(room.users);
+      const currentUserIndex = usersArray.indexOf(room.currentDrawer);
+  
+      const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
+      room.currentDrawer = usersArray[nextUserIndex];
+  
+      const userTopic = getRandomTopic();
+      room.userTopics[room.currentDrawer] = userTopic;
+  
+      io.to(roomId).emit("new_drawing_user", {
+        userId: room.currentDrawer,
+        userTopic,
+      });
+  
 
-    // Atualiza o desenhador para o próximo usuário
-    const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
-    room.currentDrawer = usersArray[nextUserIndex];
-
-    // Gera um tema aleatório para o novo desenhador
-    const userTopic = getRandomTopic();
-    room.userTopics[room.currentDrawer] = userTopic;
-
-    // Emite para todos na sala quem é o novo desenhador
-    io.to(roomId).emit("new_drawing_user", {
-      userId: room.currentDrawer,
-      userTopic: userTopic, // Envia o tema do novo desenhador
-    });
-
-    console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer} com tema ${userTopic}`);
+    }
   }
-}
+
+  socket.on("get_current_topic", (roomId, callback) => {
+    console.log(`Recebido pedido de tema atual na sala: ${roomId}`);
+
+    if (!activeRooms[roomId]) {
+      console.log(`Sala ${roomId} não encontrada.`);
+      return callback({ success: false, message: "Sala não encontrada." });
+    }
+
+    const room = activeRooms[roomId];
+    const currentDrawer = room.currentDrawer;
+    const currentTopic = room.userTopics[currentDrawer];
+
+    console.log(`Tema atual da sala ${roomId}: ${currentTopic}`);
+    console.log(`Desenhador atual da sala ${roomId}: ${currentDrawer}`);
+
+    // Emite a resposta com sucesso e o tema atual
+    callback({
+      success: true,
+      currentDrawer,
+      currentTopic,
+    });
+  });
+  
+  
 
   // Definir intervalo para troca de desenhador a cada 30 segundos
   socket.on("join_room", (roomId, callback) => {
@@ -254,11 +282,13 @@ function switchDrawingUser(roomId) {
     if (!drawingUserInterval[roomId]) {
       drawingUserInterval[roomId] = setInterval(() => {
         switchDrawingUser(roomId);
-      }, 120000); // Troca a cada 120 segundos
+      }, 30000); // Troca a cada 120 segundos
     }
 
     callback({ success: true, roomId });
   });
+
+  
 
   // Gerenciar desconexão
   socket.on("disconnect", () => {
@@ -283,6 +313,8 @@ function switchDrawingUser(roomId) {
     });
   });
 });
+
+
 
 // Inicialização do servidor
 server.listen(PORT, () => {

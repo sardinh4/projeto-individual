@@ -1,5 +1,10 @@
 let roomsInterval = null;
 
+var chute = null;
+var codSala = null;
+var idSocket = null;
+var cont = 1;
+
 window.onload = () => {
   hideAllSections(sections);
   document.getElementById("home_section").style.display = "grid";
@@ -191,10 +196,11 @@ function connectAndJoinRoom(roomId) {
 
   socket.on("connect", () => {
     console.log("Conectado ao servidor");
-
+    idSocket = socket.id;
     socket.emit("join_room", roomId, (response) => {
       if (response.success) {
         socket.roomId = roomId; // Atribui a sala ao socket
+        codSala = roomId;
         console.log(`Entrou na sala ${roomId}`);
       } else {
         console.log(response.message);
@@ -230,32 +236,17 @@ function connectAndJoinRoom(roomId) {
     }
   });
 
-  socket.on("not_drawing_permission", (data) => {
-    if (data.canDraw === false) {
-      canvas.removeEventListener("mousedown", handleMouseDown);
-    } else {
-      canvas.addEventListener("mousedown", handleMouseDown);
+  // Escutando o evento de mudança de desenhador
+  socket.on("new_drawing_user", (data) => {
+    var { userId, userTopic } = data;
+    console.log(`Agora, o desenhador é o usuário com ID: ${userId}`);
+    console.log(`Agora, o tema é: ${userTopic}`);
+    if (userId === idSocket) {
+      alert(`Tema: ${userTopic}`);
     }
   });
 
-  // Escutando o evento de mudança de desenhador
-  socket.on("new_drawing_user", (data) => {
-    const { userId, userTopic } = data;
-    console.log(`Agora, o desenhador é o usuário com ID: ${userId}`);
-    sessionStorage.setItem("chute", data.userTopic); // Armazena no sessionStorage
 
-    socket.on("not_drawing_permission", (data) => {
-      if (data.canDraw === true) {
-        alert(`Tema: ${userTopic}`);
-      }
-    });
-  });
-
-  socket.on("assigned_topic", (topic) => {
-    console.log("Seu tema para desenhar é:", topic);
-    // Exibir o tema na interface do usuário
-    alert(`Tema: ${topic}`);
-  });
 
   socket.on("disconnect", () => {
     console.log("Desconectado do servidor!");
@@ -266,7 +257,9 @@ function connectAndJoinRoom(roomId) {
 function createRoom() {
   socket.emit("create_room", (response) => {
     if (response.success) {
+      idSocket = socket.id;
       roomId = response.roomId;
+      codSala = roomId;
       console.log(`Sala criada com sucesso: ${roomId}`);
       socket.emit("join_room", roomId, (response) => {
         if (response.success) {
@@ -310,22 +303,22 @@ function createRoom() {
 
       // Escutando o evento de mudança de desenhador
       socket.on("new_drawing_user", (data) => {
-        const { userId, userTopic } = data;
+        var { userId, userTopic } = data;
         console.log(`Agora, o desenhador é o usuário com ID: ${userId}`);
-        sessionStorage.setItem("chute", data.userTopic); // Armazena no sessionStorage
-
-        socket.on("not_drawing_permission", (data) => {
-          if (data.canDraw === true) {
-            alert(`Tema: ${userTopic}`);
-          }
-        });
+        console.log(`Agora, o tema é: ${userTopic}`);
+        if (userId === idSocket) {
+          alert(`Tema: ${userTopic}`);
+        }
       });
 
-      socket.on("assigned_topic", (topic) => {
-        console.log("Seu tema para desenhar é:", topic);
-        // Exibir o tema na interface do usuário
-        alert(`Tema: ${topic}`);
-      });
+      // socket.on("assigned_topic", (topic) => {
+      //   if (cont == 1) {
+      //     console.log("Seu tema para desenhar é:", topic);
+      //     // Exibir o tema na interface do usuário
+      //     alert(`Tema: ${topic}`);
+      //     cont++;
+      //   }
+      // });
 
       socket.on("disconnect", () => {
         console.log("Desconectado do servidor!");
@@ -338,13 +331,27 @@ function createRoom() {
 
 document.getElementById("btn_chute").addEventListener("click", () => {
   const input_answer = document.getElementById("input_answer"); // Certifique-se de ter o campo de input com este id
+  // Suponha que a variável roomId contenha o ID da sala em que o cliente está.
 
-  // Verifica se o chute está correto
-  if (input_answer.value === sessionStorage.chute) {
-    alert("Acertou!");
-  } else {
-    alert("Errou!");
-  }
+  // Envia o pedido para o servidor
+  socket.emit("get_current_topic", codSala, (response) => {
+    console.log("Resposta do servidor:", response);
+
+    if (response.success) {
+      console.log("Desenhador atual:", response.currentDrawer);
+      console.log("Tema atual:", response.currentTopic);
+      chute = response.currentTopic;
+
+      // Verifica se o chute está correto
+      if (input_answer.value === chute) {
+        alert("Acertou!");
+      } else {
+        alert("Errou!");
+      }
+    } else {
+      console.log("Erro ao obter tema:", response.message);
+    }
+  });
 });
 
 function registerRommHistoryBD(codRoom) {
