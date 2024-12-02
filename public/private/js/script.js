@@ -129,28 +129,11 @@ function setRoonsButoons(codRoom) {
 
   connectAndJoinRoom(codRoom);
 
-  socket.emit("join_room", codRoom, (response) => {
-    if (response.success) {
-      roomId = codRoom;
-      console.log(`Entrou na sala ${roomId}`);
-
-      configureScreenExibition(
-        document.querySelectorAll(".main_section, #transition_section"),
-        "play_section",
-        0
-      );
-
-      // // Recebe o estado inicial do canvas (se houver)
-      // socket.on("initial_canvas_state", (state) => {
-      //   currentCanvasState = state;
-      //   if (currentCanvasState) {
-      //     restoreCanvas(currentCanvasState);
-      //   }
-      // });
-    } else {
-      console.log(response.message);
-    }
-  });
+  configureScreenExibition(
+    document.querySelectorAll(".main_section, #transition_section"),
+    "play_section",
+    0
+  );
 }
 
 function listRooms() {
@@ -253,6 +236,12 @@ function connectAndJoinRoom(roomId) {
     console.log(`Agora, o desenhador é o usuário com ID: ${data.userId}`);
   });
 
+  socket.on('assigned_topic', (topic) => {
+    console.log('Seu tema para desenhar é:', topic);
+    // Exibir o tema na interface do usuário
+    alert(`Tema: ${topic}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("Desconectado do servidor!");
   });
@@ -307,6 +296,12 @@ function createRoom() {
       // Escutando o evento de mudança de desenhador
       socket.on("new_drawing_user", (data) => {
         console.log(`Agora, o desenhador é o usuário com ID: ${data.userId}`);
+      });
+
+      socket.on('assigned_topic', (topic) => {
+        console.log('Seu tema para desenhar é:', topic);
+        // Exibir o tema na interface do usuário
+        alert(`Tema: ${topic}`);
       });
 
       socket.on("disconnect", () => {

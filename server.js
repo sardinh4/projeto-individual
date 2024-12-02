@@ -26,6 +26,58 @@ var mySqlConfig = {
   port: "3306",
 };
 
+// Lista de temas para desenhar
+const drawingTopics = [
+  "Uma casa",
+  "Um cachorro",
+  "Um gato",
+  "Uma árvore",
+  "Uma praia",
+  "Um dinossauro",
+  "Uma bicicleta",
+  "Um foguete",
+  "Uma nave espacial",
+  "Um robô",
+  "Um super-herói",
+  "Uma cidade futurista",
+  "Uma paisagem montanhosa",
+  "Uma coroa",
+  "Uma flor",
+  "Um animal selvagem",
+  "Uma motocicleta",
+  "Um castelo",
+  "Uma geladeira",
+  "Uma xícara de café",
+];
+
+// Função para gerar um ID de 8 caracteres
+function gerarIdUnico() {
+  const id = uuidv4();
+  return id.split("-")[0].slice(0, 8); // Extrai a primeira parte do UUID e pega os 8 primeiros caracteres
+}
+
+// Função para obter um tema aleatório
+function getRandomTopic() {
+  const randomIndex = Math.floor(Math.random() * drawingTopics.length);
+  return drawingTopics[randomIndex];
+}
+
+// Banco de dados (Criação de conexão)
+function executar(instrucao) {
+  return new Promise(function (resolve, reject) {
+    const conexao = mysql.createConnection(mySqlConfig);
+    conexao.connect();
+
+    conexao.query(instrucao, function (erro, resultados) {
+      conexao.end();
+      if (erro) {
+        reject(erro);
+      }
+      resolve(resultados);
+    });
+  });
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -45,30 +97,8 @@ app.use("/user", userRouter);
 app.use("/rooms", roomsRouter);
 app.use("/history", roomsHistoryRouter);
 
-// Banco de dados (Criação de conexão)
-function executar(instrucao) {
-  return new Promise(function (resolve, reject) {
-    const conexao = mysql.createConnection(mySqlConfig);
-    conexao.connect();
-
-    conexao.query(instrucao, function (erro, resultados) {
-      conexao.end();
-      if (erro) {
-        reject(erro);
-      }
-      resolve(resultados);
-    });
-  });
-}
-
 let activeRooms = {}; // Armazena os IDs das salas ativas
 let globalCanvasState = {}; // Armazena o estado do canvas por sala
-
-// Função para gerar um ID de 8 caracteres
-function gerarIdUnico() {
-  const id = uuidv4();
-  return id.split("-")[0].slice(0, 8); // Extrai a primeira parte do UUID e pega os 8 primeiros caracteres
-}
 
 // SOCKET.IO
 io.on("connection", (socket) => {
@@ -88,7 +118,7 @@ io.on("connection", (socket) => {
     }
 
     // A sala é criada e o estado do canvas é limpo
-    activeRooms[roomId] = { users: new Set([socket.id]), currentDrawer: socket.id };
+    activeRooms[roomId] = { users: new Set([socket.id]), currentDrawer: socket.id, userTopics: {} };
     globalCanvasState[roomId] = ""; // Estado do canvas limpo (não há desenho)
 
     socket.join(roomId);
@@ -142,31 +172,66 @@ io.on("connection", (socket) => {
       }
     }
   });
-  
+
+  // Função para atribuir um tema aleatório para cada usuário quando entrar na sala
+  socket.on("join_room", (roomId, callback) => {
+    if (!activeRooms[roomId]) {
+      console.log(`Sala ${roomId} não encontrada.`);
+      return callback({ success: false, message: "Sala não encontrada." });
+    }
+
+    socket.join(roomId);
+    socket.roomId = roomId; // Atribui o ID da sala ao socket
+    activeRooms[roomId].users.add(socket.id);
+
+    // Atribui um tema aleatório ao usuário
+    const userTopic = getRandomTopic();
+    activeRooms[roomId].userTopics[socket.id] = userTopic;
+    
+    // Envia o tema para o cliente
+    socket.emit("assigned_topic", userTopic);
+
+    // Enviar o estado do canvas para o novo usuário, se houver um estado
+    if (globalCanvasState[roomId]) {
+      socket.emit("initial_canvas_state", globalCanvasState[roomId]);
+    }
+
+    // Atribui o primeiro desenhador se for o primeiro usuário ou mantém o desenhador atual
+    if (activeRooms[roomId].users.size === 1) {
+      activeRooms[roomId].currentDrawer = socket.id;
+    }
+
+    // Notifica a todos na sala sobre a entrada do usuário
+    io.to(roomId).emit("user_joined", {
+      userId: socket.id,
+      users: activeRooms[roomId].users,
+      userTopic: userTopic,
+    });
+
+    callback({ success: true, roomId });
+  });
+
   // Função para alternar o desenhador a cada 30 segundos
   let drawingUserInterval = {}; // Armazena os intervalos de troca de desenhador por sala
 
- // Função para alternar o desenhador a cada 30 segundos
-function switchDrawingUser(roomId) {
-  const room = activeRooms[roomId];
-  if (room && room.users.size > 0) {
-    const usersArray = Array.from(room.users); // Converte o set de usuários em array
-    const currentUserIndex = usersArray.indexOf(room.currentDrawer);
+  function switchDrawingUser(roomId) {
+    const room = activeRooms[roomId];
+    if (room && room.users.size > 0) {
+      const usersArray = Array.from(room.users); // Converte o set de usuários em array
+      const currentUserIndex = usersArray.indexOf(room.currentDrawer);
 
-    // Atualiza o desenhador para o próximo usuário
-    const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
-    room.currentDrawer = usersArray[nextUserIndex];
+      // Atualiza o desenhador para o próximo usuário
+      const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
+      room.currentDrawer = usersArray[nextUserIndex];
 
-    // Emite para todos na sala quem é o novo desenhador
-    io.to(roomId).emit("new_drawing_user", {
-      userId: room.currentDrawer,
-    });
+      // Emite para todos na sala quem é o novo desenhador
+      io.to(roomId).emit("new_drawing_user", {
+        userId: room.currentDrawer,
+      });
 
-    console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer}`);
+      console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer}`);
+    }
   }
-}
-
-
 
   // Definir intervalo para troca de desenhador a cada 30 segundos
   socket.on("join_room", (roomId, callback) => {
@@ -179,21 +244,11 @@ function switchDrawingUser(roomId) {
     socket.roomId = roomId; // Atribui o ID da sala ao socket
     activeRooms[roomId].users.add(socket.id);
 
-    // Enviar o estado do canvas para o novo usuário, se houver um estado
-    if (globalCanvasState[roomId]) {
-      socket.emit("initial_canvas_state", globalCanvasState[roomId]);
-    }
-
-    // Atribui o primeiro desenhador se for o primeiro usuário ou mantém o desenhador atual
-    if (activeRooms[roomId].users.size === 1) {
-      activeRooms[roomId].currentDrawer = socket.id;
-    }
-
     // Iniciar a troca de desenhador a cada 30 segundos
     if (!drawingUserInterval[roomId]) {
       drawingUserInterval[roomId] = setInterval(() => {
         switchDrawingUser(roomId);
-      }, 30000); // Troca a cada 30 segundos
+      }, 120000); // Troca a cada 120 segundos
     }
 
     callback({ success: true, roomId });
