@@ -78,56 +78,97 @@ io.on("connection", (socket) => {
   socket.emit("availableRooms", Object.keys(activeRooms));
 
   // Função para criar uma nova sala
- socket.on("create_room", async (callback) => {
-  const roomId = gerarIdUnico();
-  console.log(`Criando sala com ID: ${roomId}`);
+  socket.on("create_room", async (callback) => {
+    const roomId = gerarIdUnico();
+    console.log(`Criando sala com ID: ${roomId}`);
 
-  if (activeRooms[roomId]) {
-    console.log(`Sala ${roomId} já existe.`);
-    return callback({ success: false, message: "Sala já existe." });
-  }
+    if (activeRooms[roomId]) {
+      console.log(`Sala ${roomId} já existe.`);
+      return callback({ success: false, message: "Sala já existe." });
+    }
 
-  // A sala é criada e o estado do canvas é limpo
-  activeRooms[roomId] = { users: new Set([socket.id]) };
-  globalCanvasState[roomId] = ""; // Estado do canvas limpo (não há desenho)
+    // A sala é criada e o estado do canvas é limpo
+    activeRooms[roomId] = { users: new Set([socket.id]), currentDrawer: socket.id };
+    globalCanvasState[roomId] = ""; // Estado do canvas limpo (não há desenho)
 
-  socket.join(roomId);
-  console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
+    socket.join(roomId);
+    console.log(`Nova sala criada: ${roomId} pelo usuário ${socket.id}`);
 
-  try {
-    const query = `INSERT INTO room (codRoom) VALUES ('${roomId}')`;
-    await executar(query);
+    try {
+      const query = `INSERT INTO room (codRoom) VALUES ('${roomId}')`;
+      await executar(query);
 
-    // Emitir para todos os clientes na sala (inclusive para o criador)
-    io.to(roomId).emit("room_created", {
-      roomId,
-      users: activeRooms[roomId].users,
-    });
+      // Emitir para todos os clientes na sala (inclusive para o criador)
+      io.to(roomId).emit("room_created", {
+        roomId,
+        users: activeRooms[roomId].users,
+        currentDrawer: activeRooms[roomId].currentDrawer,
+      });
 
-    callback({ success: true, roomId });
-  } catch (erro) {
-    console.log("Erro ao salvar a sala no banco de dados:", erro);
-    callback({
-      success: false,
-      message: "Erro ao salvar a sala no banco de dados.",
-    });
-  }
-});
-
-
-  // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
-  // Função para gerenciar o envio de dados do canvas
-  socket.on("draw_data", (dataURL) => {
-    const roomId = socket.roomId; // Garantir que estamos trabalhando na sala correta
-    if (roomId) {
-      // Atualiza o estado do canvas para a sala
-      globalCanvasState[roomId] = dataURL;
-      // Emite a atualização para todos os clientes na sala
-      io.to(roomId).emit("canvas_update", dataURL);
+      callback({ success: true, roomId });
+    } catch (erro) {
+      console.log("Erro ao salvar a sala no banco de dados:", erro);
+      callback({
+        success: false,
+        message: "Erro ao salvar a sala no banco de dados.",
+      });
     }
   });
 
-  // Quando um usuário entra na sala, envia o estado atual do canvas
+  // Recebe os dados do canvas dos clientes e os emite para todos os usuários na sala
+  socket.on("draw_data", (dataURL) => {
+    const roomId = socket.roomId; // Garantir que estamos trabalhando na sala correta
+    if (roomId) {
+      const room = activeRooms[roomId];
+  
+      // Verifica se o usuário tentando desenhar é o desenhador atual
+      if (socket.id === room.currentDrawer) {
+        console.log(`Usuário ${socket.id} tentou desenhar é o desenhador.`);
+        socket.emit("not_drawing_permission", {
+          message: "Você é o desenhador atual.",
+          canDraw: true,  // Indica que o usuário não pode desenhar
+        });
+        // Atualiza o estado do canvas para a sala
+        globalCanvasState[roomId] = dataURL;
+        // Emite a atualização para todos os clientes na sala
+        io.to(roomId).emit("canvas_update", dataURL);
+      } else {
+        // Caso o usuário não seja o desenhador, não permite o desenho
+        console.log(`Usuário ${socket.id} tentou desenhar, mas não é o desenhador.`);
+        socket.emit("not_drawing_permission", {
+          message: "Você não é o desenhador atual.",
+          canDraw: false,  // Indica que o usuário não pode desenhar
+        });
+      }
+    }
+  });
+  
+  // Função para alternar o desenhador a cada 30 segundos
+  let drawingUserInterval = {}; // Armazena os intervalos de troca de desenhador por sala
+
+ // Função para alternar o desenhador a cada 30 segundos
+function switchDrawingUser(roomId) {
+  const room = activeRooms[roomId];
+  if (room && room.users.size > 0) {
+    const usersArray = Array.from(room.users); // Converte o set de usuários em array
+    const currentUserIndex = usersArray.indexOf(room.currentDrawer);
+
+    // Atualiza o desenhador para o próximo usuário
+    const nextUserIndex = (currentUserIndex + 1) % usersArray.length;
+    room.currentDrawer = usersArray[nextUserIndex];
+
+    // Emite para todos na sala quem é o novo desenhador
+    io.to(roomId).emit("new_drawing_user", {
+      userId: room.currentDrawer,
+    });
+
+    console.log(`Novo desenhador para a sala ${roomId}: ${room.currentDrawer}`);
+  }
+}
+
+
+
+  // Definir intervalo para troca de desenhador a cada 30 segundos
   socket.on("join_room", (roomId, callback) => {
     if (!activeRooms[roomId]) {
       console.log(`Sala ${roomId} não encontrada.`);
@@ -143,6 +184,18 @@ io.on("connection", (socket) => {
       socket.emit("initial_canvas_state", globalCanvasState[roomId]);
     }
 
+    // Atribui o primeiro desenhador se for o primeiro usuário ou mantém o desenhador atual
+    if (activeRooms[roomId].users.size === 1) {
+      activeRooms[roomId].currentDrawer = socket.id;
+    }
+
+    // Iniciar a troca de desenhador a cada 30 segundos
+    if (!drawingUserInterval[roomId]) {
+      drawingUserInterval[roomId] = setInterval(() => {
+        switchDrawingUser(roomId);
+      }, 30000); // Troca a cada 30 segundos
+    }
+
     callback({ success: true, roomId });
   });
 
@@ -156,6 +209,8 @@ io.on("connection", (socket) => {
         room.users.delete(socket.id);
         if (room.users.size === 0) {
           console.log(`Sala ${roomId} está vazia, mas permanece ativa.`);
+          clearInterval(drawingUserInterval[roomId]);
+          delete drawingUserInterval[roomId];
         }
 
         // Notificar todos os usuários restantes na sala sobre a desconexão

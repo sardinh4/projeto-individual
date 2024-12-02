@@ -73,55 +73,6 @@
 
     <main id="main" class="main">
 
-        <!-- HOME -->
-
-        <section class="main_section" id="home_section">
-            <div id="home_right_section_contant">
-                <h2>DIVERSÃO E DESENHO EM UM SÓ LUGAR</h2>
-                <p>On our website, you can access an amazing collection of popular and new songs. Stream your favorite
-                    tracks in high quality and enjoy without interruptions. Whatever your taste in music, we have it all
-                    for you!
-                </p>
-                <button class="btn_new_roon" id="home_btn_new_roon">Nova Sala</button>
-                <button class="btn_list_rooms" id="btn_list_rooms">Salas Disponíveis</button>
-            </div>
-
-            <div id="home_left_section_contant">
-                <img class="logo" src="../../config/assets/logo/logo.svg" alt="">
-                <h1>Sketch Up</h1>
-            </div>
-
-            <img id="soot_bg_1" src="../../config/assets/bg/soot_bg_1.svg" alt="">
-            <img id="soot_bg_2" src="../../config/assets/bg/soot_bg_2.svg" alt="">
-            <div id="circle1"></div>
-            <div id="circle2"></div>
-            <div id="black_bg"></div>
-        </section>
-
-        <!-- /HOME -->
-
-        <!-- rooms -->
-
-        <section class="main_section" id="rooms_section">
-
-
-            <h2>SALAS DISPONÍVEIS</h2>
-
-            <div id="rooms">
-                
-
-            </div>
-
-
-            <div class="btn_conatainer">
-                <button class="btn_new_roon" id="rooms_btn_new_roon">Nova Sala</button>
-            </div>
-
-
-        </section>
-
-        <!-- /rooms -->
-
         <!-- PLAY -->
 
         <section class="main_section" id="play_section">
@@ -180,22 +131,17 @@
 
             <section class="right">
 
-                
-                <section class="ranking">
-                    <h2>Ranking</h2>
-                    <div class="players">
-    
-                    </div>
+                <section class="answer">
+                    <h2>Resposta</h2>
+                    <div class="answers"></div>
+                    <label for="input_answer">Resposta:</label>
+                    <input id="input_answer" type="text">
+                    <button type="submit">Enviar</button>
 
                 </section>
-
-                <section class="answer">
-                    <h2>Chute</h2>
-
-                    <input id="input_answer" type="text">
-
-
-                    <button type="submit">Chutar</button>
+                <section class="ranking">
+                    <h2>Ranking</h2>
+                    <div class="players"></div>
 
                 </section>
 
@@ -211,10 +157,50 @@
 
             <section class="top">
                 <section class="draw">
+                    <canvas id="canvas2">
 
+                    </canvas>
                 </section>
 
                 <section class="tools">
+
+                    <section class="tool_box">
+                        <button class="button_tool active" data-action="brush">
+                            <span class="material-symbols-outlined">brush</span>
+                        </button>
+
+                        <button class="button_tool" data-action="rubber">
+                            <span class="material-symbols-outlined">ink_eraser</span>
+                        </button>
+
+                        <button class="button_tool">
+                            <input type="color" class="input_color">
+                        </button>
+                    </section>
+
+                    <section class="tool_box">
+                        <button class="button_size  active" id="stroke2_5" value="5">
+                            <span class="stroke"></span>
+                        </button>
+
+                        <button class="button_size" id="stroke_10" value="10">
+                            <span class="stroke"></span>
+                        </button>
+
+                        <button class="button_size" id="stroke_15" value="15">
+                            <span class="stroke"></span>
+                        </button>
+
+                        <button class="button_size" id="stroke_20" value="20">
+                            <span class="stroke"></span>
+                        </button>
+                    </section>
+
+                    <section class="tool_box">
+                        <button class="button_tool button_clear">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </section>
 
                 </section>
             </section>
@@ -294,6 +280,7 @@
 <script src="./js/tools.js"></script>
 <script defer src="./js/socket.js"></script>
 <script src="./js/canvas_config.js"></script>
+<script src="./js/canvas2.config.js"></script>
 <script src="./js/rooms.js"></script>
 <script src="./js/sketch_up_game_config.js"></script>
 <script src="./js/script.js"></script>
